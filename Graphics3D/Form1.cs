@@ -1,11 +1,12 @@
 using System.Diagnostics;
+using System.Numerics;
 
 namespace Graphics3D
 {
     public partial class Form1 : Form
     {
         static readonly System.Windows.Forms.Timer timer = new();
-        const float scale = 50;
+        const float scale = 100;
 
         readonly Painter painter;
         readonly DirectBitmap canvasBitmap;
@@ -22,10 +23,13 @@ namespace Graphics3D
             canvas.Image = canvasBitmap.Bitmap;
 
             timer.Tick += new EventHandler(TimerEventProcessor);
-            timer.Interval = 300;
+            timer.Interval = 100;
 
             shapes = new List<Shape>();
             painter = new Painter(canvasBitmap.Width, canvasBitmap.Height, scale);
+
+            painter.DrawXAxis(canvasBitmap);
+            painter.DrawYAxis(canvasBitmap);
         }
 
         private void buttonLoad_Click(object sender, EventArgs e)
@@ -57,6 +61,13 @@ namespace Graphics3D
 
         private void TimerEventProcessor(object? sender, EventArgs e)
         {
+            if (selectedShape == null)
+                return;
+
+            ClearCanvas();
+            //Rotate(selectedShape, 0.1f);
+            Rotate(selectedShape, new Vector3(0, 1, 0), 0.1f);
+
             DrawScene();
         }
 
@@ -85,9 +96,12 @@ namespace Graphics3D
             DrawScene();
         }
 
-        private void checkBoxNormalMap_CheckedChanged(object sender, EventArgs e)
+        private void ClearCanvas()
         {
-            // TODO
+            using var g = Graphics.FromImage(canvasBitmap.Bitmap);
+            g.Clear(Color.White);
+            painter.DrawXAxis(canvasBitmap);
+            painter.DrawYAxis(canvasBitmap);
         }
 
         private void buttonSelectShape_Click(object sender, EventArgs e)
@@ -101,14 +115,6 @@ namespace Graphics3D
             }
 
             selectedShape = shapes[shapeId];
-        }
-
-        private void checkBoxMesh_CheckedChanged(object sender, EventArgs e)
-        {
-            using var g = Graphics.FromImage(canvasBitmap.Bitmap);
-            g.Clear(Color.White);
-
-            DrawScene();
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -136,34 +142,56 @@ namespace Graphics3D
             {
                 for(int i = 0; i < f.Vertices.Count; i++)
                 {
-                    var location = f.Vertices[i].Location;
-
-                    Point3D locationDiff;
+                    Vector3 locationDiff;
                     if (direction == MoveDirection.Right)
                     {
-                        locationDiff = new Point3D(0.1f, 0, 0);
+                        locationDiff = new Vector3(0.1f, 0, 0);
                     }
                     else if(direction == MoveDirection.Left)
                     {
-                        locationDiff = new Point3D(-0.1f, 0, 0);
+                        locationDiff = new Vector3(-0.1f, 0, 0);
                     }
                     else if(direction == MoveDirection.Up)
                     {
-                        locationDiff = new Point3D(0, 0.1f, 0);
+                        locationDiff = new Vector3(0, 0.1f, 0);
                     }
                     else // direction == MoveDirection.Down
                     {
-                        locationDiff = new Point3D(0, -0.1f, 0);;
+                        locationDiff = new Vector3(0, -0.1f, 0);;
                     }
-                    
 
-                    f.Vertices[i] = new Vertex
-                        (
-                        location += locationDiff
-                        );
+                    f.Vertices[i].Location += locationDiff;
                 }
             }
-            
+        }
+
+        private void Rotate(Shape shape, float radians)
+        {
+            Matrix4x4 Rx = Matrix4x4.CreateRotationX(radians);
+
+            foreach (var f in shape.Faces)
+            {
+                for(int i = 0; i < f.Vertices.Count; i++)
+                {
+                    f.Vertices[i].Location = Vector3.Transform(f.Vertices[i].Location, Rx);
+                }
+            }
+        }
+
+        private void Rotate(Shape shape, Vector3 point, float radians)
+        {
+            Matrix4x4 Rx = Matrix4x4.CreateRotationX(radians);
+            Matrix4x4 T = Matrix4x4.CreateTranslation(point);
+            Matrix4x4 TRev = Matrix4x4.CreateTranslation(-point);
+            Matrix4x4 M = TRev * Rx * T;
+
+            foreach (var f in shape.Faces)
+            {
+                for (int i = 0; i < f.Vertices.Count; i++)
+                {
+                    f.Vertices[i].Location = Vector3.Transform(f.Vertices[i].Location, M);
+                }
+            }
         }
     }
 }

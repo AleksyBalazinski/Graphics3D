@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 
 namespace Graphics3D
 {
     internal class Vertex
     {
-        Point3D location;
-        public Point3D Location { get => location; }
-        public Vertex(Point3D location)
+        public Vector3 Location { get; set; }
+        public Vertex(Vector3 location)
         {
-            this.location = location;
+            Location = location;
         }
 
         public override string ToString()
         {
-            return $"v = {location}";
+            return $"v = {Location}";
         }
     }
 }

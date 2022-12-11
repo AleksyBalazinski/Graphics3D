@@ -1,10 +1,12 @@
-﻿namespace Graphics3D
+﻿using System.Numerics;
+
+namespace Graphics3D
 {
     internal class ObjFileReader
     {
         public static List<Face> Read(string path)
         {
-            List<Point3D> points = new();
+            List<Vector3> points = new();
             List<Face> faces = new();
 
             foreach (string line in File.ReadLines(path))
@@ -27,16 +29,16 @@
             return faces;
         }
 
-        private static Point3D ParsePoint3D(string line)
+        private static Vector3 ParsePoint3D(string line)
         {
             string[] subs = line.Trim().Split(' ');
             float x = float.Parse(subs[1]);
             float y = float.Parse(subs[2]);
             float z = float.Parse(subs[3]);
-            return new Point3D(x, y, z);
+            return new Vector3(x, y, z);
         }
 
-        private static Face ParseFace(string line, List<Point3D> points)
+        private static Face ParseFace(string line, List<Vector3> points)
         {
             Face face = new();
             string[] vStrings = line.Trim().Split(' ').Skip(1).ToArray();
