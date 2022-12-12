@@ -35,6 +35,9 @@
             this.buttonAnimationStart = new System.Windows.Forms.Button();
             this.buttonLoad = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.trackBarScale = new System.Windows.Forms.TrackBar();
             this.buttonSelectShape = new System.Windows.Forms.Button();
             this.textBoxSelectShape = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -43,6 +46,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarScale)).BeginInit();
             this.panel3.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -120,12 +124,43 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.label2);
+            this.panel2.Controls.Add(this.label1);
+            this.panel2.Controls.Add(this.trackBarScale);
             this.panel2.Controls.Add(this.buttonSelectShape);
             this.panel2.Controls.Add(this.textBoxSelectShape);
             this.panel2.Location = new System.Drawing.Point(3, 83);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(114, 531);
             this.panel2.TabIndex = 4;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(9, 90);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(39, 15);
+            this.label2.TabIndex = 17;
+            this.label2.Text = "Zoom";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 28);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(89, 15);
+            this.label1.TabIndex = 16;
+            this.label1.Text = "Shape selection";
+            // 
+            // trackBarScale
+            // 
+            this.trackBarScale.Location = new System.Drawing.Point(3, 108);
+            this.trackBarScale.Maximum = 100;
+            this.trackBarScale.Name = "trackBarScale";
+            this.trackBarScale.Size = new System.Drawing.Size(104, 45);
+            this.trackBarScale.TabIndex = 15;
+            this.trackBarScale.Value = 20;
+            this.trackBarScale.Scroll += new System.EventHandler(this.trackBarScale_Scroll);
             // 
             // buttonSelectShape
             // 
@@ -179,6 +214,7 @@
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarScale)).EndInit();
             this.panel3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -198,5 +234,8 @@
         private Button buttonClear;
         private Button buttonSelectShape;
         private TextBox textBoxSelectShape;
+        private TrackBar trackBarScale;
+        private Label label2;
+        private Label label1;
     }
 }

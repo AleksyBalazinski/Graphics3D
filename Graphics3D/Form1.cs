@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Numerics;
 
 namespace Graphics3D
@@ -6,7 +5,6 @@ namespace Graphics3D
     public partial class Form1 : Form
     {
         static readonly System.Windows.Forms.Timer timer = new();
-        const float scale = 100;
 
         readonly Painter painter;
         readonly DirectBitmap canvasBitmap;
@@ -26,7 +24,7 @@ namespace Graphics3D
             timer.Interval = 100;
 
             shapes = new List<Shape>();
-            painter = new Painter(canvasBitmap.Width, canvasBitmap.Height, scale);
+            painter = new Painter(canvasBitmap.Width, canvasBitmap.Height, 100);
 
             painter.DrawXAxis(canvasBitmap);
             painter.DrawYAxis(canvasBitmap);
@@ -43,7 +41,7 @@ namespace Graphics3D
             {
                 string path = fileDialog.FileName;
                 List<Face> faces = ObjFileReader.Read(path);
-                shapes.Add(new Shape(faces));
+                shapes.Add(new Shape(faces, shapes.Count));
 
                 DrawScene();
             }
@@ -192,6 +190,14 @@ namespace Graphics3D
                     f.Vertices[i].Location = Vector3.Transform(f.Vertices[i].Location, M);
                 }
             }
+        }
+
+        private void trackBarScale_Scroll(object sender, EventArgs e)
+        {
+            painter.Scale = trackBarScale.Value * 5;
+
+            ClearCanvas();
+            DrawScene();
         }
     }
 }

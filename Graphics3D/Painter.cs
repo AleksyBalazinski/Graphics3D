@@ -7,6 +7,11 @@ namespace Graphics3D
         readonly int canvasWidth;
         readonly int canvasHeight;
         float scale;
+        public float Scale 
+        {
+            get { return scale; }
+            set { scale = value; }
+        }
 
         public Painter(int canvasWidth, int canvasHeight, float scale)
         {
@@ -23,12 +28,21 @@ namespace Graphics3D
                 {
                     (float x, float y) = ToScreen(f.Vertices[i].Location);
                     using var brush = new SolidBrush(Color.Black);
-                    using var pen = new Pen(Color.Orange, 1);
+                    using var pen = new Pen(Color.Black, 1);
                     (float prevX, float prevY) = ToScreen(i == 0 ? f.Vertices[^1].Location : f.Vertices[i - 1].Location);
                     using Graphics g = Graphics.FromImage(canvas.Bitmap);
                     g.DrawLine(pen, prevX, prevY, x, y);
                 }
             }
+        }
+
+        public void PutId(Shape shape, DirectBitmap canvas)
+        {
+            using Graphics g = Graphics.FromImage(canvas.Bitmap);
+            SolidBrush brush = new(Color.Orange);
+            Font font = new("Arial", 14);
+            (float x, float y) = ToScreen(shape.Faces[0].Vertices[0].Location);
+            g.DrawString(shape.ShapeId.ToString(), font, brush, x, y);
         }
 
         public void DrawXAxis(DirectBitmap canvas)
