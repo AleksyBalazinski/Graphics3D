@@ -13,8 +13,8 @@
 
         public void DrawMesh(Painter painter, DirectBitmap canvas)
         {
-            painter.PutId(this, canvas);
             painter.DrawMesh(this, canvas);
+            painter.PutId(this, canvas);
         }
 
         public override string ToString()

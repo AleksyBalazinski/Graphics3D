@@ -63,8 +63,8 @@ namespace Graphics3D
                 return;
 
             ClearCanvas();
-            //Rotate(selectedShape, 0.1f);
-            Rotate(selectedShape, new Vector3(0, 1, 0), 0.1f);
+            //Transformations.RotateX(selectedShape, 0.1f);
+            Transformations.Rotate(selectedShape, 0.1f, new Vector3(1, 1, 0));
 
             DrawScene();
         }
@@ -159,35 +159,6 @@ namespace Graphics3D
                     }
 
                     f.Vertices[i].Location += locationDiff;
-                }
-            }
-        }
-
-        private void Rotate(Shape shape, float radians)
-        {
-            Matrix4x4 Rx = Matrix4x4.CreateRotationX(radians);
-
-            foreach (var f in shape.Faces)
-            {
-                for(int i = 0; i < f.Vertices.Count; i++)
-                {
-                    f.Vertices[i].Location = Vector3.Transform(f.Vertices[i].Location, Rx);
-                }
-            }
-        }
-
-        private void Rotate(Shape shape, Vector3 point, float radians)
-        {
-            Matrix4x4 Rx = Matrix4x4.CreateRotationX(radians);
-            Matrix4x4 T = Matrix4x4.CreateTranslation(point);
-            Matrix4x4 TRev = Matrix4x4.CreateTranslation(-point);
-            Matrix4x4 M = TRev * Rx * T;
-
-            foreach (var f in shape.Faces)
-            {
-                for (int i = 0; i < f.Vertices.Count; i++)
-                {
-                    f.Vertices[i].Location = Vector3.Transform(f.Vertices[i].Location, M);
                 }
             }
         }
