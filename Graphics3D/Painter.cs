@@ -7,6 +7,9 @@ namespace Graphics3D
         readonly int canvasWidth;
         readonly int canvasHeight;
         float scale;
+        public float Radians { get; set; }
+        public float FieldOfView { get; set; } = 1;
+        public Vector3 CameraPosition;
         public float Scale 
         {
             get { return scale; }
@@ -18,6 +21,7 @@ namespace Graphics3D
             this.canvasWidth = canvasWidth;
             this.canvasHeight = canvasHeight;
             this.scale = scale;
+            CameraPosition = new Vector3(5, 5, 5);
         }
 
         public void DrawMesh(Shape shape, DirectBitmap canvas)
@@ -26,10 +30,10 @@ namespace Graphics3D
             {
                 for (int i = 0; i < f.Vertices.Count; i++)
                 {
-                    (float x, float y) = ToScreen(f.Vertices[i].Location);
+                    (float x, float y) = ToScreen2(f.Vertices[i].Location);
                     using var brush = new SolidBrush(Color.Black);
                     using var pen = new Pen(Color.Black, 1);
-                    (float prevX, float prevY) = ToScreen(i == 0 ? f.Vertices[^1].Location : f.Vertices[i - 1].Location);
+                    (float prevX, float prevY) = ToScreen2(i == 0 ? f.Vertices[^1].Location : f.Vertices[i - 1].Location);
                     using Graphics g = Graphics.FromImage(canvas.Bitmap);
                     g.DrawLine(pen, prevX, prevY, x, y);
                 }
@@ -72,6 +76,23 @@ namespace Graphics3D
             float x = scale * point.X + canvasWidth / 2;
             float y = canvasHeight / 2 - scale * point.Y;
             return (x, y);
+        }
+
+        private (float, float) ToScreen2(Vector3 point)
+        {
+            Matrix4x4 Rx = Matrix4x4.CreateRotationX(Radians);
+            Matrix4x4 viewMatrix = Matrix4x4.CreateLookAt(CameraPosition, new Vector3(0, 0, 0), new Vector3(0, 0, 1));
+            Matrix4x4 projMatrix = Matrix4x4.CreatePerspectiveFieldOfView(FieldOfView, 1, 5, 100);
+
+            Vector4 location = new Vector4(point.X, point.Y, point.Z, 1);
+            var worldSpace = Vector4.Transform(location, Rx);
+            var eye = Vector4.Transform(worldSpace, viewMatrix);
+
+            var clip = Vector4.Transform(eye, projMatrix);
+            Vector3 normalized = new Vector3(clip.X / clip.W, clip.Y / clip.W, clip.Z / clip.W);
+
+            return ToScreen(normalized);
+
         }
     }
 }

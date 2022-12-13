@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Numerics;
 
 namespace Graphics3D
@@ -63,8 +64,7 @@ namespace Graphics3D
                 return;
 
             ClearCanvas();
-            //Transformations.RotateX(selectedShape, 0.1f);
-            Transformations.Rotate(selectedShape, 0.1f, new Vector3(1, 1, 0));
+            painter.Radians += 0.1f;
 
             DrawScene();
         }
@@ -168,6 +168,39 @@ namespace Graphics3D
             painter.Scale = trackBarScale.Value * 5;
 
             ClearCanvas();
+            DrawScene();
+        }
+
+        private void trackBarFov_Scroll(object sender, EventArgs e)
+        {
+            Debug.WriteLine(trackBarFov.Value * MathF.PI / 180.0f);
+            painter.FieldOfView = trackBarFov.Value * MathF.PI / 180.0f;
+            using Graphics g = Graphics.FromImage(canvasBitmap.Bitmap);
+            g.Clear(Color.White);
+            DrawScene();
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            painter.CameraPosition.X = (float)numericUpDown1.Value;
+            using Graphics g = Graphics.FromImage(canvasBitmap.Bitmap);
+            g.Clear(Color.White);
+            DrawScene();
+        }
+
+        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+        {
+            painter.CameraPosition.Y = (float)numericUpDown2.Value;
+            using Graphics g = Graphics.FromImage(canvasBitmap.Bitmap);
+            g.Clear(Color.White);
+            DrawScene();
+        }
+
+        private void numericUpDown3_ValueChanged(object sender, EventArgs e)
+        {
+            painter.CameraPosition.Z = (float)numericUpDown3.Value;
+            using Graphics g = Graphics.FromImage(canvasBitmap.Bitmap);
+            g.Clear(Color.White);
             DrawScene();
         }
     }
