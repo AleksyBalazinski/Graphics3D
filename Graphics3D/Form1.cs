@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Numerics;
 
 namespace Graphics3D
@@ -6,6 +5,7 @@ namespace Graphics3D
     public partial class Form1 : Form
     {
         static readonly System.Windows.Forms.Timer timer = new();
+        uint ticks = 0;
 
         readonly Painter painter;
         readonly DirectBitmap canvasBitmap;
@@ -27,8 +27,7 @@ namespace Graphics3D
             shapes = new List<Shape>();
             painter = new Painter(canvasBitmap.Width, canvasBitmap.Height, 100);
 
-            painter.DrawXAxis(canvasBitmap);
-            painter.DrawYAxis(canvasBitmap);
+            painter.DrawCoordinateSystem(canvasBitmap);
         }
 
         private void buttonLoad_Click(object sender, EventArgs e)
@@ -63,8 +62,9 @@ namespace Graphics3D
             if (selectedShape == null)
                 return;
 
+            ticks++;
             ClearCanvas();
-            painter.Radians += 0.1f;
+            selectedShape.Rotate(0.1f * ticks);
 
             DrawScene();
         }
@@ -98,8 +98,8 @@ namespace Graphics3D
         {
             using var g = Graphics.FromImage(canvasBitmap.Bitmap);
             g.Clear(Color.White);
-            painter.DrawXAxis(canvasBitmap);
-            painter.DrawYAxis(canvasBitmap);
+
+            painter.DrawCoordinateSystem(canvasBitmap);
         }
 
         private void buttonSelectShape_Click(object sender, EventArgs e)
@@ -165,7 +165,7 @@ namespace Graphics3D
 
         private void trackBarScale_Scroll(object sender, EventArgs e)
         {
-            painter.Scale = trackBarScale.Value * 5;
+            painter.Zoom = trackBarScale.Value * 5;
 
             ClearCanvas();
             DrawScene();
@@ -173,34 +173,33 @@ namespace Graphics3D
 
         private void trackBarFov_Scroll(object sender, EventArgs e)
         {
-            Debug.WriteLine(trackBarFov.Value * MathF.PI / 180.0f);
             painter.FieldOfView = trackBarFov.Value * MathF.PI / 180.0f;
-            using Graphics g = Graphics.FromImage(canvasBitmap.Bitmap);
-            g.Clear(Color.White);
+
+            ClearCanvas();
             DrawScene();
         }
 
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        private void numericUpDownCamX_ValueChanged(object sender, EventArgs e)
         {
-            painter.CameraPosition.X = (float)numericUpDown1.Value;
-            using Graphics g = Graphics.FromImage(canvasBitmap.Bitmap);
-            g.Clear(Color.White);
+            painter.CameraPosition.X = (float)numericUpDownCamX.Value;
+
+            ClearCanvas();
             DrawScene();
         }
 
-        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+        private void numericUpDownCamY_ValueChanged(object sender, EventArgs e)
         {
-            painter.CameraPosition.Y = (float)numericUpDown2.Value;
-            using Graphics g = Graphics.FromImage(canvasBitmap.Bitmap);
-            g.Clear(Color.White);
+            painter.CameraPosition.Y = (float)numericUpDownCamY.Value;
+
+            ClearCanvas();
             DrawScene();
         }
 
-        private void numericUpDown3_ValueChanged(object sender, EventArgs e)
+        private void numericUpDownCamZ_ValueChanged(object sender, EventArgs e)
         {
-            painter.CameraPosition.Z = (float)numericUpDown3.Value;
-            using Graphics g = Graphics.FromImage(canvasBitmap.Bitmap);
-            g.Clear(Color.White);
+            painter.CameraPosition.Z = (float)numericUpDownCamZ.Value;
+
+            ClearCanvas();
             DrawScene();
         }
     }
