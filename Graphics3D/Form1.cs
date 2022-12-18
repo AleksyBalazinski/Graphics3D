@@ -136,26 +136,26 @@ namespace Graphics3D
 
         private void MoveShape(Shape shape, MoveDirection direction)
         {
-            foreach(var f in shape.Faces)
+            foreach (var f in shape.Faces)
             {
-                for(int i = 0; i < f.Vertices.Count; i++)
+                for (int i = 0; i < f.Vertices.Count; i++)
                 {
                     Vector3 locationDiff;
                     if (direction == MoveDirection.Right)
                     {
                         locationDiff = new Vector3(0.1f, 0, 0);
                     }
-                    else if(direction == MoveDirection.Left)
+                    else if (direction == MoveDirection.Left)
                     {
                         locationDiff = new Vector3(-0.1f, 0, 0);
                     }
-                    else if(direction == MoveDirection.Up)
+                    else if (direction == MoveDirection.Up)
                     {
                         locationDiff = new Vector3(0, 0.1f, 0);
                     }
                     else // direction == MoveDirection.Down
                     {
-                        locationDiff = new Vector3(0, -0.1f, 0);;
+                        locationDiff = new Vector3(0, -0.1f, 0);
                     }
 
                     f.Vertices[i].Location += locationDiff;

@@ -28,7 +28,7 @@ namespace Graphics3D
         public override string ToString()
         {
             string s = "{ ";
-            foreach(Face f in Faces)
+            foreach (Face f in Faces)
             {
                 s += f.ToString();
             }

@@ -22,15 +22,26 @@ namespace Graphics3D
         {
             foreach (var f in shape.Faces)
             {
-                for (int i = 0; i < f.Vertices.Count; i++)
-                {
-                    (float x, float y) = Render(f.Vertices[i].Location, shape.ModelMatrix);
-                    (float prevX, float prevY) = Render(i == 0 ? f.Vertices[^1].Location : f.Vertices[i - 1].Location, shape.ModelMatrix);
+                DrawFace(f, shape, canvas);
+            }
+        }
 
-                    using var pen = new Pen(Color.Black, 1);
-                    using Graphics g = Graphics.FromImage(canvas.Bitmap);
-                    g.DrawLine(new Pen(Color.Black, 1), prevX, prevY, x, y);
-                }
+        private void DrawFace(Face f, Shape shape, DirectBitmap canvas)
+        {
+            List<(float, float)> screenPoints = f.Vertices.Select(v => Render(v.Location, shape.ModelMatrix)).ToList();
+            bool containedInCanvas = screenPoints.All(p => p.Item1 >= 0 && p.Item1 <= canvasWidth && p.Item2 >= 0 && p.Item2 <= canvasHeight);
+            if (!containedInCanvas)
+            {
+                return;
+            }
+
+            for (int i = 0; i < f.Vertices.Count; i++)
+            {
+                var (x, y) = screenPoints[i];
+                var (prevX, prevY) = screenPoints[i == 0 ? ^1 : i - 1];
+                using var pen = new Pen(Color.Black, 1);
+                using Graphics g = Graphics.FromImage(canvas.Bitmap);
+                g.DrawLine(new Pen(Color.Black, 1), prevX, prevY, x, y);
             }
         }
 
@@ -88,11 +99,11 @@ namespace Graphics3D
             Matrix4x4 viewMatrix = Matrix4x4.CreateLookAt(CameraPosition, new Vector3(0, 0, 0), new Vector3(0, 0, 1));
             Matrix4x4 projMatrix = Matrix4x4.CreatePerspectiveFieldOfView(FieldOfView, 1, 5, 100);
 
-            Vector4 location = new Vector4(point.X, point.Y, point.Z, 1);
+            Vector4 location = new(point.X, point.Y, point.Z, 1);
             var worldSpaceCoordinates = Vector4.Transform(location, modelMatrix);
             var eyeCoordinates = Vector4.Transform(worldSpaceCoordinates, viewMatrix);
             var clipCoordinates = Vector4.Transform(eyeCoordinates, projMatrix);
-            Vector3 normalized = new Vector3(clipCoordinates.X / clipCoordinates.W, clipCoordinates.Y / clipCoordinates.W, clipCoordinates.Z / clipCoordinates.W);
+            Vector3 normalized = new(clipCoordinates.X / clipCoordinates.W, clipCoordinates.Y / clipCoordinates.W, clipCoordinates.Z / clipCoordinates.W);
 
             return ToScreen(normalized);
         }
