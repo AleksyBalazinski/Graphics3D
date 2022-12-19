@@ -9,6 +9,7 @@ namespace Graphics3D
         public float FieldOfView { get; set; } = 1;
         public Vector3 CameraPosition;
         public float Zoom { get; set; }
+        public bool CullBackFaces = false;
 
         public Painter(int canvasWidth, int canvasHeight, float zoom)
         {
@@ -30,7 +31,7 @@ namespace Graphics3D
         {
             List<(float, float)> screenPoints = f.Vertices.Select(v => Render(v.Location, shape.ModelMatrix)).ToList();
             bool containedInCanvas = screenPoints.All(p => p.Item1 >= 0 && p.Item1 <= canvasWidth && p.Item2 >= 0 && p.Item2 <= canvasHeight);
-            if (!containedInCanvas)
+            if (!containedInCanvas || (CullBackFaces && IsBackFace(f, shape)))
             {
                 return;
             }
@@ -43,6 +44,18 @@ namespace Graphics3D
                 using Graphics g = Graphics.FromImage(canvas.Bitmap);
                 g.DrawLine(new Pen(Color.Black, 1), prevX, prevY, x, y);
             }
+        }
+
+        private bool IsBackFace(Face f, Shape shape)
+        {
+            Matrix4x4 viewMatrix = Matrix4x4.CreateLookAt(CameraPosition, new Vector3(0, 0, 0), new Vector3(0, 0, 1));
+            Matrix4x4 projMatrix = Matrix4x4.CreatePerspectiveFieldOfView(FieldOfView, 1, 5, 100);
+            var locations = f.Vertices.Select(v => new Vector4(v.Location.X, v.Location.Y, v.Location.Z, 1));
+            var worldSpaceCoords = locations.Select(l => Vector4.Transform(l, shape.ModelMatrix));
+            List<Vector3> ws3 = worldSpaceCoords.Select(ws => new Vector3(ws.X, ws.Y, ws.Z)).ToList();
+            var normal = Vector3.Cross(ws3[1] - ws3[0], ws3[2] - ws3[0]);
+
+            return Vector3.Dot(ws3[0] - CameraPosition, normal) >= 0;
         }
 
         public void PutId(Shape shape, DirectBitmap canvas)
@@ -85,12 +98,13 @@ namespace Graphics3D
 
         private void DrawAxis(DirectBitmap canvas, Vector3 start, Vector3 end, Color color)
         {
-            using Graphics g = Graphics.FromImage(canvas.Bitmap);
             (float startX, float startY) = Render(start, Matrix4x4.Identity);
             (float endX, float endY) = Render(end, Matrix4x4.Identity);
 
-            using Pen pen = new Pen(color);
+            using Pen pen = new(color);
             pen.CustomEndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(5, 5);
+
+            using Graphics g = Graphics.FromImage(canvas.Bitmap);
             g.DrawLine(pen, startX, startY, endX, endY);
         }
 

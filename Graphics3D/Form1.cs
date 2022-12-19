@@ -202,5 +202,17 @@ namespace Graphics3D
             ClearCanvas();
             DrawScene();
         }
+
+        private void checkBoxBackFaces_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxBackFaces.Checked)
+            {
+                painter.CullBackFaces = true;
+            }
+            else
+            {
+                painter.CullBackFaces = false;
+            }
+        }
     }
 }

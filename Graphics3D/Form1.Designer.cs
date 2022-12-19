@@ -50,6 +50,7 @@
             this.textBoxSelectShape = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.buttonClear = new System.Windows.Forms.Button();
+            this.checkBoxBackFaces = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.panel1.SuspendLayout();
@@ -136,6 +137,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.checkBoxBackFaces);
             this.panel2.Controls.Add(this.numericUpDownCamZ);
             this.panel2.Controls.Add(this.numericUpDownCamY);
             this.panel2.Controls.Add(this.numericUpDownCamX);
@@ -340,6 +342,17 @@
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
             // 
+            // checkBoxBackFaces
+            // 
+            this.checkBoxBackFaces.AutoSize = true;
+            this.checkBoxBackFaces.Location = new System.Drawing.Point(4, 351);
+            this.checkBoxBackFaces.Name = "checkBoxBackFaces";
+            this.checkBoxBackFaces.Size = new System.Drawing.Size(105, 19);
+            this.checkBoxBackFaces.TabIndex = 29;
+            this.checkBoxBackFaces.Text = "Cull back faces";
+            this.checkBoxBackFaces.UseVisualStyleBackColor = true;
+            this.checkBoxBackFaces.CheckedChanged += new System.EventHandler(this.checkBoxBackFaces_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -392,5 +405,6 @@
         private Label label6;
         private Label label5;
         private Label label4;
+        private CheckBox checkBoxBackFaces;
     }
 }
