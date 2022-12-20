@@ -11,6 +11,7 @@ namespace Graphics3D
         readonly DirectBitmap canvasBitmap;
         readonly List<Shape> shapes;
         Shape? selectedShape;
+        Random random = new();
 
         public Form1()
         {
@@ -41,7 +42,7 @@ namespace Graphics3D
             {
                 string path = fileDialog.FileName;
                 List<Face> faces = ObjFileReader.Read(path);
-                shapes.Add(new Shape(faces, shapes.Count));
+                shapes.Add(new Shape(faces, shapes.Count, new RGB(random.NextSingle(), random.NextSingle(), random.NextSingle())));
 
                 DrawScene();
             }
@@ -71,9 +72,20 @@ namespace Graphics3D
 
         private void DrawScene()
         {
+            for (int y = 0; y < canvasBitmap.Height; y++)
+            {
+                for (int x = 0; x < canvasBitmap.Width; x++)
+                {
+                    canvasBitmap.SetPixel(x, y, Color.White);
+                    painter.zBuffer[x, y] = float.MaxValue;
+                }
+            }
+            painter.DrawCoordinateSystem(canvasBitmap);
+
             foreach (var shape in shapes)
             {
-                shape.DrawMesh(painter, canvasBitmap);
+                //shape.DrawMesh(painter, canvasBitmap);
+                shape.PaintShape(painter, canvasBitmap);
             }
 
             canvas.Invalidate();
@@ -205,14 +217,14 @@ namespace Graphics3D
 
         private void checkBoxBackFaces_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBoxBackFaces.Checked)
+            /*if (checkBoxBackFaces.Checked)
             {
                 painter.CullBackFaces = true;
             }
             else
             {
                 painter.CullBackFaces = false;
-            }
+            }*/
         }
     }
 }

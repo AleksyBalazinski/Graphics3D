@@ -5,9 +5,11 @@ namespace Graphics3D
     internal class Vertex
     {
         public Vector3 Location { get; set; }
-        public Vertex(Vector3 location)
+        public Vector3 NormalVector { get; set; }
+        public Vertex(Vector3 location, Vector3 normalVector)
         {
             Location = location;
+            NormalVector = normalVector;
         }
 
         public override string ToString()

@@ -7,13 +7,19 @@ namespace Graphics3D
         public static List<Face> Read(string path)
         {
             List<Vector3> points = new();
+            List<Vector3> normalVectors = new();
             List<Face> faces = new();
 
             foreach (string line in File.ReadLines(path))
             {
                 if (line.StartsWith('#') || line.StartsWith('o') || line.StartsWith('s')
-                    || line.StartsWith("vt") || line.StartsWith("vn") || line.Length == 0)
+                    || line.StartsWith("vt") || line.Length == 0)
                     continue;
+                if(line.StartsWith("vn"))
+                {
+                    normalVectors.Add(ParsePoint3D(line));
+                    continue;
+                }
                 if (line.StartsWith('v'))
                 {
                     points.Add(ParsePoint3D(line));
@@ -21,7 +27,7 @@ namespace Graphics3D
                 }
                 if (line.StartsWith('f'))
                 {
-                    faces.Add(ParseFace(line, points));
+                    faces.Add(ParseFace(line, points, normalVectors));
                     continue;
                 }
             }
@@ -38,7 +44,7 @@ namespace Graphics3D
             return new Vector3(x, y, z);
         }
 
-        private static Face ParseFace(string line, List<Vector3> points)
+        private static Face ParseFace(string line, List<Vector3> points, List<Vector3> normalVectors)
         {
             Face face = new();
             string[] vStrings = line.Trim().Split(' ').Skip(1).ToArray();
@@ -46,7 +52,8 @@ namespace Graphics3D
             {
                 string[] subs = vString.Split("/");
                 int vIndx = int.Parse(subs[0]);
-                Vertex vertex = new(points[vIndx - 1]);
+                int vnIndx = int.Parse(subs[2]);
+                Vertex vertex = new(points[vIndx - 1], normalVectors[vnIndx - 1]);
                 face.AddVertex(vertex);
             }
             return face;
