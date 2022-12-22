@@ -1,3 +1,5 @@
+using Graphics3D.Model;
+using Graphics3D.Rendering;
 using System.Numerics;
 
 namespace Graphics3D
@@ -6,12 +8,15 @@ namespace Graphics3D
     {
         static readonly System.Windows.Forms.Timer timer = new();
         uint ticks = 0;
+        bool animateLight = false;
 
         readonly Painter painter;
         readonly DirectBitmap canvasBitmap;
         readonly List<Shape> shapes;
         Shape? selectedShape;
-        Random random = new();
+        readonly Random random = new();
+        readonly LightAnimator lightAnimator;
+        const float initialRadius = 30;
 
         public Form1()
         {
@@ -26,9 +31,27 @@ namespace Graphics3D
             timer.Interval = 100;
 
             shapes = new List<Shape>();
-            painter = new Painter(canvasBitmap.Width, canvasBitmap.Height, 100);
 
-            painter.DrawCoordinateSystem(canvasBitmap);
+            painter = new Painter(canvasBitmap);
+            painter.vertexProcessor.Zoom = 100;
+
+            lightAnimator = new LightAnimator(new Vector3(initialRadius, 0, 20), 5);
+
+            painter.DrawCoordinateSystem();
+            InitScene();
+        }
+
+        private void InitScene()
+        {
+            string pathToTorusObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\torus-n.obj"));
+            List<Face> faces = ObjFileReader.Read(pathToTorusObj);
+            shapes.Add(new Shape(faces, shapes.Count, new RGB(random.NextSingle(), random.NextSingle(), random.NextSingle())));
+
+            faces = ObjFileReader.Read(pathToTorusObj);
+            shapes.Add(new Shape(faces, shapes.Count, new RGB(random.NextSingle(), random.NextSingle(), random.NextSingle())));
+            MoveShape(shapes[0], MoveDirection.Left, 0.8f);
+
+            DrawScene();
         }
 
         private void buttonLoad_Click(object sender, EventArgs e)
@@ -60,32 +83,32 @@ namespace Graphics3D
 
         private void TimerEventProcessor(object? sender, EventArgs e)
         {
-            if (selectedShape == null)
-                return;
-
             ticks++;
             ClearCanvas();
-            selectedShape.Rotate(0.1f * ticks);
+
+            float deg = 0.02f;
+            for (int i = 0; i < shapes.Count; i++)
+            {
+                shapes[i].Rotate(deg * (i + 1) * ticks);
+            }
+
+            if (animateLight)
+            {
+                painter.rasterizer.colorPicker.lightDirection =
+                Vector3.Normalize(lightAnimator.MoveLightSource());
+            }
 
             DrawScene();
         }
 
         private void DrawScene()
         {
-            for (int y = 0; y < canvasBitmap.Height; y++)
-            {
-                for (int x = 0; x < canvasBitmap.Width; x++)
-                {
-                    canvasBitmap.SetPixel(x, y, Color.White);
-                    painter.zBuffer[x, y] = float.MaxValue;
-                }
-            }
-            painter.DrawCoordinateSystem(canvasBitmap);
+            painter.rasterizer.ClearDepthBuffer();
+            painter.DrawCoordinateSystem();
 
             foreach (var shape in shapes)
             {
-                //shape.DrawMesh(painter, canvasBitmap);
-                shape.PaintShape(painter, canvasBitmap);
+                shape.PaintShape(painter);
             }
 
             canvas.Invalidate();
@@ -99,19 +122,15 @@ namespace Graphics3D
         private void ClearScene()
         {
             shapes.Clear();
-
-            using var g = Graphics.FromImage(canvasBitmap.Bitmap);
-            g.Clear(Color.White);
+            painter.rasterizer.ClearCanvas();
 
             DrawScene();
         }
 
         private void ClearCanvas()
         {
-            using var g = Graphics.FromImage(canvasBitmap.Bitmap);
-            g.Clear(Color.White);
-
-            painter.DrawCoordinateSystem(canvasBitmap);
+            painter.rasterizer.ClearCanvas();
+            painter.DrawCoordinateSystem();
         }
 
         private void buttonSelectShape_Click(object sender, EventArgs e)
@@ -132,21 +151,23 @@ namespace Graphics3D
             if (selectedShape == null)
                 return;
 
+            float amount = 0.1f;
+
             if (e.KeyCode == Keys.D)
-                MoveShape(selectedShape, MoveDirection.Right);
+                MoveShape(selectedShape, MoveDirection.Right, amount);
             if (e.KeyCode == Keys.A)
-                MoveShape(selectedShape, MoveDirection.Left);
+                MoveShape(selectedShape, MoveDirection.Left, amount);
             if (e.KeyCode == Keys.S)
-                MoveShape(selectedShape, MoveDirection.Down);
+                MoveShape(selectedShape, MoveDirection.Down, amount);
             if (e.KeyCode == Keys.W)
-                MoveShape(selectedShape, MoveDirection.Up);
+                MoveShape(selectedShape, MoveDirection.Up, amount);
 
             using Graphics g = Graphics.FromImage(canvasBitmap.Bitmap);
             g.Clear(Color.White);
             DrawScene();
         }
 
-        private void MoveShape(Shape shape, MoveDirection direction)
+        private void MoveShape(Shape shape, MoveDirection direction, float amount)
         {
             foreach (var f in shape.Faces)
             {
@@ -155,19 +176,19 @@ namespace Graphics3D
                     Vector3 locationDiff;
                     if (direction == MoveDirection.Right)
                     {
-                        locationDiff = new Vector3(0.1f, 0, 0);
+                        locationDiff = new Vector3(amount, 0, 0);
                     }
                     else if (direction == MoveDirection.Left)
                     {
-                        locationDiff = new Vector3(-0.1f, 0, 0);
+                        locationDiff = new Vector3(-amount, 0, 0);
                     }
                     else if (direction == MoveDirection.Up)
                     {
-                        locationDiff = new Vector3(0, 0.1f, 0);
+                        locationDiff = new Vector3(0, amount, 0);
                     }
                     else // direction == MoveDirection.Down
                     {
-                        locationDiff = new Vector3(0, -0.1f, 0);
+                        locationDiff = new Vector3(0, -amount, 0);
                     }
 
                     f.Vertices[i].Location += locationDiff;
@@ -177,7 +198,7 @@ namespace Graphics3D
 
         private void trackBarScale_Scroll(object sender, EventArgs e)
         {
-            painter.Zoom = trackBarScale.Value * 5;
+            painter.vertexProcessor.Zoom = trackBarScale.Value * 5;
 
             ClearCanvas();
             DrawScene();
@@ -185,7 +206,7 @@ namespace Graphics3D
 
         private void trackBarFov_Scroll(object sender, EventArgs e)
         {
-            painter.FieldOfView = trackBarFov.Value * MathF.PI / 180.0f;
+            painter.vertexProcessor.FieldOfView = trackBarFov.Value * MathF.PI / 180.0f;
 
             ClearCanvas();
             DrawScene();
@@ -193,24 +214,22 @@ namespace Graphics3D
 
         private void numericUpDownCamX_ValueChanged(object sender, EventArgs e)
         {
-            painter.CameraPosition.X = (float)numericUpDownCamX.Value;
-
-            ClearCanvas();
-            DrawScene();
+            InvalidateCameraPosition();
         }
 
         private void numericUpDownCamY_ValueChanged(object sender, EventArgs e)
         {
-            painter.CameraPosition.Y = (float)numericUpDownCamY.Value;
-
-            ClearCanvas();
-            DrawScene();
+            InvalidateCameraPosition();
         }
 
         private void numericUpDownCamZ_ValueChanged(object sender, EventArgs e)
         {
-            painter.CameraPosition.Z = (float)numericUpDownCamZ.Value;
+            InvalidateCameraPosition();
+        }
 
+        private void InvalidateCameraPosition()
+        {
+            painter.vertexProcessor.CameraPosition = new Vector3((float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
             ClearCanvas();
             DrawScene();
         }
@@ -219,12 +238,56 @@ namespace Graphics3D
         {
             /*if (checkBoxBackFaces.Checked)
             {
-                painter.CullBackFaces = true;
+                rasterizer.CullBackFaces = true;
             }
             else
             {
-                painter.CullBackFaces = false;
+                rasterizer.CullBackFaces = false;
             }*/
+        }
+
+        private void radioButtonNormals_CheckedChanged(object sender, EventArgs e)
+        {
+            InvalidateInterpolationMethod();
+            DrawScene();
+        }
+
+        private void InvalidateInterpolationMethod()
+        {
+            if (radioButtonNormals.Checked)
+            {
+                painter.rasterizer.colorPicker.interpolantType = InterpolantType.NormalVector;
+            }
+            else if (radioButtonColors.Checked)
+            {
+                painter.rasterizer.colorPicker.interpolantType = InterpolantType.Color;
+            }
+        }
+
+        private void radioButtonColors_CheckedChanged(object sender, EventArgs e)
+        {
+            InvalidateInterpolationMethod();
+        }
+
+        private void checkBoxAnimateLight_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxAnimateLight.Checked)
+            {
+                animateLight = true;
+            }
+            else
+            {
+                animateLight = false;
+            }
+        }
+
+        private void trackBarLightZ_Scroll(object sender, EventArgs e)
+        {
+            lightAnimator.Z = trackBarLightZ.Value;
+            painter.rasterizer.colorPicker.lightDirection
+                = Vector3.Normalize(lightAnimator.MoveLightSource());
+
+            DrawScene();
         }
     }
 }

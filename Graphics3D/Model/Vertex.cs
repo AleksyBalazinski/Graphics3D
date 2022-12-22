@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Graphics3D
+namespace Graphics3D.Model
 {
     internal class Vertex
     {

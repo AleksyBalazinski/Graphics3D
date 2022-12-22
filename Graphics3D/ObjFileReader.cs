@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using Graphics3D.Model;
+using System.Numerics;
 
 namespace Graphics3D
 {
@@ -8,16 +9,21 @@ namespace Graphics3D
         {
             List<Vector3> points = new();
             List<Vector3> normalVectors = new();
+            List<Vector2> uvCoordinates = new();
             List<Face> faces = new();
 
             foreach (string line in File.ReadLines(path))
             {
-                if (line.StartsWith('#') || line.StartsWith('o') || line.StartsWith('s')
-                    || line.StartsWith("vt") || line.Length == 0)
+                if (line.StartsWith('#') || line.StartsWith('o') || line.StartsWith('s') || line.Length == 0)
                     continue;
-                if(line.StartsWith("vn"))
+                if (line.StartsWith("vn"))
                 {
                     normalVectors.Add(ParsePoint3D(line));
+                    continue;
+                }
+                if (line.StartsWith("vt"))
+                {
+                    uvCoordinates.Add(ParsePoint2D(line));
                     continue;
                 }
                 if (line.StartsWith('v'))
@@ -42,6 +48,14 @@ namespace Graphics3D
             float y = float.Parse(subs[2]);
             float z = float.Parse(subs[3]);
             return new Vector3(x, y, z);
+        }
+
+        private static Vector2 ParsePoint2D(string line)
+        {
+            string[] subs = line.Split(' ');
+            float x = float.Parse(subs[1]);
+            float y = float.Parse(subs[2]);
+            return new Vector2(x, y);
         }
 
         private static Face ParseFace(string line, List<Vector3> points, List<Vector3> normalVectors)

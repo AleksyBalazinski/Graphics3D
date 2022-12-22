@@ -35,6 +35,13 @@
             this.buttonAnimationStart = new System.Windows.Forms.Button();
             this.buttonLoad = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label8 = new System.Windows.Forms.Label();
+            this.trackBarLightZ = new System.Windows.Forms.TrackBar();
+            this.checkBoxAnimateLight = new System.Windows.Forms.CheckBox();
+            this.radioButtonColors = new System.Windows.Forms.RadioButton();
+            this.radioButtonNormals = new System.Windows.Forms.RadioButton();
+            this.label7 = new System.Windows.Forms.Label();
+            this.checkBoxBackFaces = new System.Windows.Forms.CheckBox();
             this.numericUpDownCamZ = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownCamY = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownCamX = new System.Windows.Forms.NumericUpDown();
@@ -50,11 +57,11 @@
             this.textBoxSelectShape = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.buttonClear = new System.Windows.Forms.Button();
-            this.checkBoxBackFaces = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarLightZ)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCamZ)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCamY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCamX)).BeginInit();
@@ -137,6 +144,12 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.label8);
+            this.panel2.Controls.Add(this.trackBarLightZ);
+            this.panel2.Controls.Add(this.checkBoxAnimateLight);
+            this.panel2.Controls.Add(this.radioButtonColors);
+            this.panel2.Controls.Add(this.radioButtonNormals);
+            this.panel2.Controls.Add(this.label7);
             this.panel2.Controls.Add(this.checkBoxBackFaces);
             this.panel2.Controls.Add(this.numericUpDownCamZ);
             this.panel2.Controls.Add(this.numericUpDownCamY);
@@ -155,6 +168,81 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(114, 531);
             this.panel2.TabIndex = 4;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(3, 432);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(12, 15);
+            this.label8.TabIndex = 35;
+            this.label8.Text = "z";
+            // 
+            // trackBarLightZ
+            // 
+            this.trackBarLightZ.Location = new System.Drawing.Point(21, 427);
+            this.trackBarLightZ.Maximum = 50;
+            this.trackBarLightZ.Minimum = 1;
+            this.trackBarLightZ.Name = "trackBarLightZ";
+            this.trackBarLightZ.Size = new System.Drawing.Size(81, 45);
+            this.trackBarLightZ.TabIndex = 34;
+            this.trackBarLightZ.Value = 30;
+            this.trackBarLightZ.Scroll += new System.EventHandler(this.trackBarLightZ_Scroll);
+            // 
+            // checkBoxAnimateLight
+            // 
+            this.checkBoxAnimateLight.AutoSize = true;
+            this.checkBoxAnimateLight.Location = new System.Drawing.Point(3, 478);
+            this.checkBoxAnimateLight.Name = "checkBoxAnimateLight";
+            this.checkBoxAnimateLight.Size = new System.Drawing.Size(96, 19);
+            this.checkBoxAnimateLight.TabIndex = 33;
+            this.checkBoxAnimateLight.Text = "animate light";
+            this.checkBoxAnimateLight.UseVisualStyleBackColor = true;
+            this.checkBoxAnimateLight.CheckedChanged += new System.EventHandler(this.checkBoxAnimateLight_CheckedChanged);
+            // 
+            // radioButtonColors
+            // 
+            this.radioButtonColors.AutoSize = true;
+            this.radioButtonColors.Checked = true;
+            this.radioButtonColors.Location = new System.Drawing.Point(3, 382);
+            this.radioButtonColors.Name = "radioButtonColors";
+            this.radioButtonColors.Size = new System.Drawing.Size(57, 19);
+            this.radioButtonColors.TabIndex = 32;
+            this.radioButtonColors.TabStop = true;
+            this.radioButtonColors.Text = "colors";
+            this.radioButtonColors.UseVisualStyleBackColor = true;
+            this.radioButtonColors.CheckedChanged += new System.EventHandler(this.radioButtonColors_CheckedChanged);
+            // 
+            // radioButtonNormals
+            // 
+            this.radioButtonNormals.AutoSize = true;
+            this.radioButtonNormals.Location = new System.Drawing.Point(3, 407);
+            this.radioButtonNormals.Name = "radioButtonNormals";
+            this.radioButtonNormals.Size = new System.Drawing.Size(104, 19);
+            this.radioButtonNormals.TabIndex = 31;
+            this.radioButtonNormals.Text = "normal vectors";
+            this.radioButtonNormals.UseVisualStyleBackColor = true;
+            this.radioButtonNormals.CheckedChanged += new System.EventHandler(this.radioButtonNormals_CheckedChanged);
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(4, 346);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(100, 33);
+            this.label7.TabIndex = 30;
+            this.label7.Text = "Interpolation method";
+            // 
+            // checkBoxBackFaces
+            // 
+            this.checkBoxBackFaces.AutoSize = true;
+            this.checkBoxBackFaces.Enabled = false;
+            this.checkBoxBackFaces.Location = new System.Drawing.Point(3, 503);
+            this.checkBoxBackFaces.Name = "checkBoxBackFaces";
+            this.checkBoxBackFaces.Size = new System.Drawing.Size(105, 19);
+            this.checkBoxBackFaces.TabIndex = 29;
+            this.checkBoxBackFaces.Text = "Cull back faces";
+            this.checkBoxBackFaces.UseVisualStyleBackColor = true;
+            this.checkBoxBackFaces.CheckedChanged += new System.EventHandler(this.checkBoxBackFaces_CheckedChanged);
             // 
             // numericUpDownCamZ
             // 
@@ -342,17 +430,6 @@
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
             // 
-            // checkBoxBackFaces
-            // 
-            this.checkBoxBackFaces.AutoSize = true;
-            this.checkBoxBackFaces.Location = new System.Drawing.Point(4, 351);
-            this.checkBoxBackFaces.Name = "checkBoxBackFaces";
-            this.checkBoxBackFaces.Size = new System.Drawing.Size(105, 19);
-            this.checkBoxBackFaces.TabIndex = 29;
-            this.checkBoxBackFaces.Text = "Cull back faces";
-            this.checkBoxBackFaces.UseVisualStyleBackColor = true;
-            this.checkBoxBackFaces.CheckedChanged += new System.EventHandler(this.checkBoxBackFaces_CheckedChanged);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -370,6 +447,7 @@
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarLightZ)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCamZ)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCamY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCamX)).EndInit();
@@ -406,5 +484,11 @@
         private Label label5;
         private Label label4;
         private CheckBox checkBoxBackFaces;
+        private RadioButton radioButtonColors;
+        private RadioButton radioButtonNormals;
+        private Label label7;
+        private CheckBox checkBoxAnimateLight;
+        private Label label8;
+        private TrackBar trackBarLightZ;
     }
 }

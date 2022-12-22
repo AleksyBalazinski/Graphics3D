@@ -1,4 +1,4 @@
-﻿namespace Graphics3D
+﻿namespace Graphics3D.Model
 {
     internal class Face
     {
@@ -15,7 +15,7 @@
 
         public override string ToString()
         {
-            string result = String.Empty;
+            string result = string.Empty;
             foreach (var v in Vertices)
             {
                 result += "{" + v.ToString() + "} ";

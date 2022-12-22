@@ -1,6 +1,7 @@
-﻿using System.Numerics;
+﻿using Graphics3D.Rendering;
+using System.Numerics;
 
-namespace Graphics3D
+namespace Graphics3D.Model
 {
     internal class Shape
     {
@@ -9,6 +10,10 @@ namespace Graphics3D
         public Matrix4x4 ModelMatrix { get; set; } = Matrix4x4.Identity;
         public RGB color;
 
+        public float ks = 0.5f;
+        public float kd = 0.5f;
+        public float m = 1;
+
         public Shape(List<Face> faces, int shapeId, RGB color)
         {
             Faces = faces;
@@ -16,15 +21,14 @@ namespace Graphics3D
             this.color = color;
         }
 
-        public void DrawMesh(Painter painter, DirectBitmap canvas)
+        public void DrawMesh(Painter painter)
         {
-            painter.DrawMesh(this, canvas);
-            painter.PutId(this, canvas);
+            painter.DrawMesh(this);
         }
 
-        public void PaintShape(Painter painter, DirectBitmap canvas)
+        public void PaintShape(Painter painter)
         {
-            painter.Paint(this, canvas);
+            painter.Paint(this);
         }
 
         public void Rotate(float radians)
