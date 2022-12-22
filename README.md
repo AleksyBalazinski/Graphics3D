@@ -1,2 +1,3 @@
 # Graphics3D
-aby włączyć animacje - wybrac ksztalt (shape selection - wpisac indeks figury: 0,1, itd), wybrac select i start animation
+"Start animation" by default only rotates the shapes. To enable light animation, select "animate light".
+The trackbar labeled with "z" controls light source's position.

@@ -57,7 +57,7 @@ namespace Graphics3D.Rendering
 
         private void CalculateProjection()
         {
-            projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(FieldOfView, 1, 5, 100);
+            projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(FieldOfView, 1, 1, 100);
         }
 
         public VertexInfo Process(Vertex vertex, Matrix4x4 modelMatrix)
