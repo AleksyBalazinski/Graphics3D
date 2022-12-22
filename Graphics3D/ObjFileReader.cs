@@ -44,17 +44,17 @@ namespace Graphics3D
         private static Vector3 ParsePoint3D(string line)
         {
             string[] subs = line.Trim().Split(' ');
-            float x = float.Parse(subs[1]);
-            float y = float.Parse(subs[2]);
-            float z = float.Parse(subs[3]);
+            float x = float.Parse(subs[1], System.Globalization.CultureInfo.InvariantCulture);
+            float y = float.Parse(subs[2], System.Globalization.CultureInfo.InvariantCulture);
+            float z = float.Parse(subs[3], System.Globalization.CultureInfo.InvariantCulture);
             return new Vector3(x, y, z);
         }
 
         private static Vector2 ParsePoint2D(string line)
         {
             string[] subs = line.Split(' ');
-            float x = float.Parse(subs[1]);
-            float y = float.Parse(subs[2]);
+            float x = float.Parse(subs[1], System.Globalization.CultureInfo.InvariantCulture);
+            float y = float.Parse(subs[2], System.Globalization.CultureInfo.InvariantCulture);
             return new Vector2(x, y);
         }
 
@@ -65,8 +65,8 @@ namespace Graphics3D
             foreach (var vString in vStrings)
             {
                 string[] subs = vString.Split("/");
-                int vIndx = int.Parse(subs[0]);
-                int vnIndx = int.Parse(subs[2]);
+                int vIndx = int.Parse(subs[0], System.Globalization.CultureInfo.InvariantCulture);
+                int vnIndx = int.Parse(subs[2], System.Globalization.CultureInfo.InvariantCulture);
                 Vertex vertex = new(points[vIndx - 1], normalVectors[vnIndx - 1]);
                 face.AddVertex(vertex);
             }
