@@ -14,6 +14,23 @@ namespace Graphics3D.Model
         public float kd = 0.5f;
         public float m = 1;
 
+        private float x;
+        private float y;
+        private float z;
+
+        public float X
+        {
+            get => x;
+        }
+        public float Y
+        {
+            get => y;
+        }
+        public float Z
+        {
+            get => z;
+        }
+
         public Shape(List<Face> faces, int shapeId, RGB color)
         {
             Faces = faces;
@@ -33,7 +50,26 @@ namespace Graphics3D.Model
 
         public void Rotate(float radians)
         {
-            ModelMatrix = Matrix4x4.CreateRotationX(radians);
+            ModelMatrix *= Matrix4x4.CreateRotationX(radians);
+        }
+
+        public void Translate(float x, float y, float z)
+        {
+            ModelMatrix *= Matrix4x4.CreateTranslation(x, y, z);
+
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        public void ApplyGeneralRotation(Matrix4x4 rotation)
+        {
+            ModelMatrix *= rotation;
+        }
+
+        public void ResetPosition()
+        {
+            ModelMatrix = Matrix4x4.Identity;
         }
 
         public override string ToString()

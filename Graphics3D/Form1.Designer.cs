@@ -41,7 +41,6 @@
             this.radioButtonColors = new System.Windows.Forms.RadioButton();
             this.radioButtonNormals = new System.Windows.Forms.RadioButton();
             this.label7 = new System.Windows.Forms.Label();
-            this.checkBoxBackFaces = new System.Windows.Forms.CheckBox();
             this.numericUpDownCamZ = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownCamY = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownCamX = new System.Windows.Forms.NumericUpDown();
@@ -51,10 +50,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.trackBarFov = new System.Windows.Forms.TrackBar();
             this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.trackBarScale = new System.Windows.Forms.TrackBar();
-            this.buttonSelectShape = new System.Windows.Forms.Button();
-            this.textBoxSelectShape = new System.Windows.Forms.TextBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.buttonClear = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
@@ -150,7 +146,6 @@
             this.panel2.Controls.Add(this.radioButtonColors);
             this.panel2.Controls.Add(this.radioButtonNormals);
             this.panel2.Controls.Add(this.label7);
-            this.panel2.Controls.Add(this.checkBoxBackFaces);
             this.panel2.Controls.Add(this.numericUpDownCamZ);
             this.panel2.Controls.Add(this.numericUpDownCamY);
             this.panel2.Controls.Add(this.numericUpDownCamX);
@@ -160,10 +155,7 @@
             this.panel2.Controls.Add(this.label3);
             this.panel2.Controls.Add(this.trackBarFov);
             this.panel2.Controls.Add(this.label2);
-            this.panel2.Controls.Add(this.label1);
             this.panel2.Controls.Add(this.trackBarScale);
-            this.panel2.Controls.Add(this.buttonSelectShape);
-            this.panel2.Controls.Add(this.textBoxSelectShape);
             this.panel2.Location = new System.Drawing.Point(3, 83);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(114, 531);
@@ -231,18 +223,6 @@
             this.label7.Size = new System.Drawing.Size(100, 33);
             this.label7.TabIndex = 30;
             this.label7.Text = "Interpolation method";
-            // 
-            // checkBoxBackFaces
-            // 
-            this.checkBoxBackFaces.AutoSize = true;
-            this.checkBoxBackFaces.Enabled = false;
-            this.checkBoxBackFaces.Location = new System.Drawing.Point(3, 503);
-            this.checkBoxBackFaces.Name = "checkBoxBackFaces";
-            this.checkBoxBackFaces.Size = new System.Drawing.Size(105, 19);
-            this.checkBoxBackFaces.TabIndex = 29;
-            this.checkBoxBackFaces.Text = "Cull back faces";
-            this.checkBoxBackFaces.UseVisualStyleBackColor = true;
-            this.checkBoxBackFaces.CheckedChanged += new System.EventHandler(this.checkBoxBackFaces_CheckedChanged);
             // 
             // numericUpDownCamZ
             // 
@@ -376,15 +356,6 @@
             this.label2.TabIndex = 17;
             this.label2.Text = "Zoom";
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 28);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 15);
-            this.label1.TabIndex = 16;
-            this.label1.Text = "Shape selection";
-            // 
             // trackBarScale
             // 
             this.trackBarScale.Location = new System.Drawing.Point(3, 108);
@@ -394,23 +365,6 @@
             this.trackBarScale.TabIndex = 15;
             this.trackBarScale.Value = 20;
             this.trackBarScale.Scroll += new System.EventHandler(this.trackBarScale_Scroll);
-            // 
-            // buttonSelectShape
-            // 
-            this.buttonSelectShape.Location = new System.Drawing.Point(55, 46);
-            this.buttonSelectShape.Name = "buttonSelectShape";
-            this.buttonSelectShape.Size = new System.Drawing.Size(55, 23);
-            this.buttonSelectShape.TabIndex = 14;
-            this.buttonSelectShape.Text = "Select shape";
-            this.buttonSelectShape.UseVisualStyleBackColor = true;
-            this.buttonSelectShape.Click += new System.EventHandler(this.buttonSelectShape_Click);
-            // 
-            // textBoxSelectShape
-            // 
-            this.textBoxSelectShape.Location = new System.Drawing.Point(3, 46);
-            this.textBoxSelectShape.Name = "textBoxSelectShape";
-            this.textBoxSelectShape.Size = new System.Drawing.Size(46, 23);
-            this.textBoxSelectShape.TabIndex = 13;
             // 
             // panel3
             // 
@@ -440,7 +394,6 @@
             this.KeyPreview = true;
             this.Name = "Form1";
             this.Text = "Filler";
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).EndInit();
@@ -470,11 +423,8 @@
         private Button buttonAnimationStart;
         private Panel panel3;
         private Button buttonClear;
-        private Button buttonSelectShape;
-        private TextBox textBoxSelectShape;
         private TrackBar trackBarScale;
         private Label label2;
-        private Label label1;
         private Label label3;
         private TrackBar trackBarFov;
         private NumericUpDown numericUpDownCamZ;
@@ -483,7 +433,6 @@
         private Label label6;
         private Label label5;
         private Label label4;
-        private CheckBox checkBoxBackFaces;
         private RadioButton radioButtonColors;
         private RadioButton radioButtonNormals;
         private Label label7;

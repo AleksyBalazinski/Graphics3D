@@ -1,4 +1,5 @@
 ﻿using Graphics3D.Rendering;
+using System.Numerics;
 
 namespace Graphics3D
 {
@@ -33,6 +34,15 @@ namespace Graphics3D
             float wc = 1 - wa - wb;
 
             return (wa < 0 ? 0 : wa, wb < 0 ? 0 : wb, wc < 0 ? 0 : wc);
+        }
+
+        public static Matrix4x4 RotateOnto(Vector3 a, Vector3 b)
+        {
+            Vector3 axis = Vector3.Normalize(Vector3.Cross(a, b));
+            float angle = MathF.Acos(Vector3.Dot(a, b) / (a.Length() * b.Length()));
+
+            Quaternion q = Quaternion.CreateFromAxisAngle(axis, angle);
+            return Matrix4x4.CreateFromQuaternion(q);
         }
     }
 }

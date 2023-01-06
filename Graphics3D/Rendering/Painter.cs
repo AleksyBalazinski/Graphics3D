@@ -3,6 +3,9 @@ using System.Numerics;
 
 namespace Graphics3D.Rendering
 {
+    /// <summary>
+    /// Encapsulates the graphics pipeline.
+    /// </summary>
     internal class Painter
     {
         public VertexProcessor vertexProcessor;
@@ -17,12 +20,15 @@ namespace Graphics3D.Rendering
         public void Paint(Shape shape)
         {
             var modelMatrix = shape.ModelMatrix;
-            foreach (var face in shape.Faces)
+            List<VertexInfo>[] faceInfos = new List<VertexInfo>[shape.Faces.Count];
+            Parallel.For(0, shape.Faces.Count, index =>
             {
-                List<VertexInfo> vertexInfos
-                    = face.Vertices.Select(v => vertexProcessor.Process(v, modelMatrix)).ToList();
+                faceInfos[index] = vertexProcessor.ProcessFace(shape.Faces[index], modelMatrix);
+            });
 
-                rasterizer.FillFace(vertexInfos, shape);
+            for (int i = 0; i < shape.Faces.Count; i++)
+            {
+                rasterizer.FillFace(faceInfos[i], shape);
             }
         }
 
@@ -50,9 +56,10 @@ namespace Graphics3D.Rendering
 
         public void DrawCoordinateSystem()
         {
-            DrawAxis(new Vector3(-1, 0, 0), new Vector3(1, 0, 0), Color.Red); // x
-            DrawAxis(new Vector3(0, -1, 0), new Vector3(0, 1, 0), Color.Green); // y
-            DrawAxis(new Vector3(0, 0, -1), new Vector3(0, 0, 1), Color.Blue); // z
+            float a = 5;
+            DrawAxis(new Vector3(-a, 0, 0), new Vector3(a, 0, 0), Color.Red); // x
+            DrawAxis(new Vector3(0, -a, 0), new Vector3(0, a, 0), Color.Green); // y
+            DrawAxis(new Vector3(0, 0, -a), new Vector3(0, 0, a), Color.Blue); // z
         }
     }
 }

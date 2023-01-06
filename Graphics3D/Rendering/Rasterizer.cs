@@ -2,9 +2,12 @@
 
 namespace Graphics3D.Rendering
 {
+    /// <summary>
+    /// Effectively draws pixels on the screen.
+    /// Visibility of individual points is determined through the depth test.
+    /// </summary>
     internal class Rasterizer
     {
-        public bool CullBackFaces = false; // unused
         public ColorPicker colorPicker;
         private readonly int canvasWidth;
         private readonly int canvasHeight;
@@ -57,6 +60,10 @@ namespace Graphics3D.Rendering
 
         public void FillFace(List<VertexInfo> screenPoints, Shape shape)
         {
+            if (screenPoints.Count == 0)
+            {
+                return;
+            }
             bool containedInCanvas = screenPoints.All(p => p.X >= 0 && p.X <= canvasWidth && p.Y >= 0 && p.Y <= canvasHeight);
             if (!containedInCanvas)
             {
@@ -141,28 +148,6 @@ namespace Graphics3D.Rendering
                 this.xIntersect = xIntersect;
             }
         }
-
-        /*private bool IsBackFace(Face f, Shape shape)
-        {
-            return false; // not used
-            Matrix4x4 viewMatrix = Matrix4x4.CreateLookAt(CameraPosition, new Vector3(0, 0, 0), new Vector3(0, 0, 1));
-            Matrix4x4 projMatrix = Matrix4x4.CreatePerspectiveFieldOfView(FieldOfView, 1, 5, 100);
-            var locations = f.Vertices.Select(v => new Vector4(v.Location.X, v.Location.Y, v.Location.Z, 1));
-            var worldSpaceCoords = locations.Select(l => Vector4.Transform(l, shape.ModelMatrix));
-            List<Vector3> ws3 = worldSpaceCoords.Select(ws => new Vector3(ws.X, ws.Y, ws.Z)).ToList();
-            var normal = Vector3.Cross(ws3[1] - ws3[0], ws3[2] - ws3[0]);
-
-            return Vector3.Dot(ws3[0] - CameraPosition, normal) >= 0;
-        }*/
-
-        /*public void PutId(Shape shape, DirectBitmap canvas)
-        {
-            using Graphics g = Graphics.FromImage(canvas.Bitmap);
-            SolidBrush brush = new(Color.Orange);
-            Font font = new("Arial", 14);
-            (float x, float y) = ToScreen(shape.Faces[0].Vertices[0].Location);
-            g.DrawString(shape.ShapeId.ToString(), font, brush, x, y);
-        }*/
 
         public void DrawArrow(VertexInfo startInfo, VertexInfo endInfo, Color color)
         {
