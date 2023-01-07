@@ -56,7 +56,7 @@ namespace Graphics3D.Rendering
 
         public void DrawCoordinateSystem()
         {
-            float a = 5;
+            float a = 1;
             DrawAxis(new Vector3(-a, 0, 0), new Vector3(a, 0, 0), Color.Red); // x
             DrawAxis(new Vector3(0, -a, 0), new Vector3(0, a, 0), Color.Green); // y
             DrawAxis(new Vector3(0, 0, -a), new Vector3(0, 0, a), Color.Blue); // z

@@ -57,7 +57,7 @@ namespace Graphics3D.Rendering
         {
             this.canvasWidth = canvasWidth;
             this.canvasHeight = canvasHeight;
-            CameraPosition = new Vector3(6, 6, 6);
+            CameraPosition = new Vector3(1, 1, 1);
             FieldOfView = 1;
             Zoom = 1;
             lightColor = new RGB(1, 1, 1);

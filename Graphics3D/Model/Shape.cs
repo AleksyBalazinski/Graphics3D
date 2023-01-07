@@ -14,28 +14,27 @@ namespace Graphics3D.Model
         public float kd = 0.5f;
         public float m = 1;
 
-        private float x;
-        private float y;
-        private float z;
+        Vector3 position;
 
-        public float X
+        public Vector3 direction;
+        private Vector3 initialDirection;
+
+        // current position is WS coordinates. Object's position can be modified via the Translate() method
+        public Vector3 Position
         {
-            get => x;
+            get => position;
         }
-        public float Y
+        public Vector3 InitialDirection
         {
-            get => y;
-        }
-        public float Z
-        {
-            get => z;
+            get => initialDirection;
         }
 
-        public Shape(List<Face> faces, int shapeId, RGB color)
+        public Shape(List<Face> faces, int shapeId, RGB color, Vector3 initialDirection)
         {
             Faces = faces;
             ShapeId = shapeId;
             this.color = color;
+            this.initialDirection = initialDirection;
         }
 
         public void DrawMesh(Painter painter)
@@ -57,9 +56,9 @@ namespace Graphics3D.Model
         {
             ModelMatrix *= Matrix4x4.CreateTranslation(x, y, z);
 
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            position.X = x;
+            position.Y = y;
+            position.Z = z;
         }
 
         public void ApplyGeneralRotation(Matrix4x4 rotation)

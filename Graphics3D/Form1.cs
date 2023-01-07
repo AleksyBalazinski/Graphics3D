@@ -33,6 +33,7 @@ namespace Graphics3D
 
             painter = new Painter(canvasBitmap);
             painter.vertexProcessor.Zoom = 100;
+            painter.vertexProcessor.CameraPosition = new Vector3((float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
 
             lightAnimator = new LightAnimator(new Vector3(initialRadius, 0, 20), 5);
 
@@ -42,9 +43,14 @@ namespace Graphics3D
 
         private void InitScene()
         {
-            string pathToTorusObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\car.obj"));
-            List<Face> faces = ObjFileReader.Read(pathToTorusObj);
-            shapes.Add(new Shape(faces, shapes.Count, new RGB(random.NextSingle(), random.NextSingle(), random.NextSingle())));
+            string carObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\car.obj"));
+            List<Face> faces = ObjFileReader.Read(carObj);
+            shapes.Add(new Shape(faces, shapes.Count, new RGB(random.NextSingle(), random.NextSingle(), random.NextSingle()), new Vector3(-1, 0, 0)));
+
+            string sphereObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\cube.obj"));
+            faces = ObjFileReader.Read(sphereObj);
+            shapes.Add(new Shape(faces, shapes.Count, new RGB(random.NextSingle(), random.NextSingle(), random.NextSingle()), new Vector3(-1, 0, 0)));
+            shapes[1].Translate(-10, 0, 0);
 
             DrawScene();
         }
@@ -60,7 +66,7 @@ namespace Graphics3D
             {
                 string path = fileDialog.FileName;
                 List<Face> faces = ObjFileReader.Read(path);
-                shapes.Add(new Shape(faces, shapes.Count, new RGB(random.NextSingle(), random.NextSingle(), random.NextSingle())));
+                shapes.Add(new Shape(faces, shapes.Count, new RGB(random.NextSingle(), random.NextSingle(), random.NextSingle()), new Vector3(-1, 0, 0)));
 
                 DrawScene();
             }
@@ -86,13 +92,38 @@ namespace Graphics3D
             var (s, c) = MathF.SinCos(ticks / 20f);
             float x = (a * c) / (1 + MathF.Pow(s, 2));
             float y = (a * s * c) / (1 + MathF.Pow(s, 2));
-            
+
 
             (s, c) = MathF.SinCos((ticks + 1) / 20f);
             float nextX = (a * c) / (1 + MathF.Pow(s, 2));
             float nextY = (a * s * c) / (1 + MathF.Pow(s, 2));
-            shapes[0].ApplyGeneralRotation(Utils.RotateOnto(new Vector3(-1, 0, 0), new Vector3(nextX - x, nextY - y, 0)));
+            shapes[0].direction.X = nextX - x;
+            shapes[0].direction.Y = nextY - y;
+            shapes[0].direction.Z = 0;
+
+            shapes[0].ApplyGeneralRotation(Utils.RotateOnto(shapes[0].InitialDirection, shapes[0].direction));
             shapes[0].Translate(x, y, 0f);
+
+            if (radioButtonCamFixed.Checked)
+            {
+                painter.vertexProcessor.CameraTarget = new Vector3(0);
+                painter.vertexProcessor.CameraPosition = new Vector3((float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
+            }
+            if (radioButtonCamTracking.Checked)
+            {
+                painter.vertexProcessor.CameraTarget = shapes[0].Position;
+            }
+            if (radioButtonCamTpp.Checked)
+            {
+                float camDist = 3;
+                float targetDist = 10;
+                Vector3 camElevation = new Vector3(0, 0, 4f);
+                Vector3 camPosition = shapes[0].Position - (Vector3.Normalize(shapes[0].direction) * camDist) + camElevation;
+                Vector3 camTarget = shapes[0].Position + Vector3.Normalize(shapes[0].direction) * targetDist;
+                painter.vertexProcessor.CameraPosition = camPosition;
+                painter.vertexProcessor.CameraTarget = camTarget;
+            }
+
 
             if (animateLight)
             {
