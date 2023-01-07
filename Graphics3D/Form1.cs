@@ -82,10 +82,29 @@ namespace Graphics3D
             timer.Stop();
         }
 
+        private bool darken = true;
+        private int r = 0;
+        private int g = 0;
+        private int b = 0;
+
         private void TimerEventProcessor(object? sender, EventArgs e)
         {
             ticks++;
-            ClearCanvas();
+
+            if (darken)
+            {
+                r++; g++; b++;
+                if (r == 255)
+                    darken = false;
+            }
+            else
+            {
+                r--; g--; b--;
+                if (r == 0)
+                    darken = true;
+            }
+
+            painter.rasterizer.ClearCanvas(Color.FromArgb(r, g, b));
             shapes[0].ResetPosition();
 
             float a = 5;
@@ -155,29 +174,24 @@ namespace Graphics3D
         private void ClearScene()
         {
             shapes.Clear();
-            painter.rasterizer.ClearCanvas();
+            painter.rasterizer.ClearCanvas(Color.LightSkyBlue);
 
             DrawScene();
-        }
-
-        private void ClearCanvas()
-        {
-            painter.rasterizer.ClearCanvas();
         }
 
         private void trackBarScale_Scroll(object sender, EventArgs e)
         {
             painter.vertexProcessor.Zoom = trackBarScale.Value * 5;
+            painter.rasterizer.ClearCanvas(Color.LightSkyBlue);
 
-            ClearCanvas();
             DrawScene();
         }
 
         private void trackBarFov_Scroll(object sender, EventArgs e)
         {
-            painter.vertexProcessor.FieldOfView = trackBarFov.Value * MathF.PI / 180.0f;
+            painter.vertexProcessor.FieldOfView = trackBarFov.Value / 100f;
+            painter.rasterizer.ClearCanvas(Color.LightSkyBlue);
 
-            ClearCanvas();
             DrawScene();
         }
 
@@ -199,7 +213,7 @@ namespace Graphics3D
         private void InvalidateCameraPosition()
         {
             painter.vertexProcessor.CameraPosition = new Vector3((float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
-            ClearCanvas();
+            painter.rasterizer.ClearCanvas(Color.LightSkyBlue);
             DrawScene();
         }
 
@@ -219,11 +233,16 @@ namespace Graphics3D
             {
                 painter.rasterizer.colorPicker.interpolantType = InterpolantType.Color;
             }
+            else if (radioButtonConst.Checked)
+            {
+                painter.rasterizer.colorPicker.interpolantType = InterpolantType.Constant;
+            }
         }
 
         private void radioButtonColors_CheckedChanged(object sender, EventArgs e)
         {
             InvalidateInterpolationMethod();
+            DrawScene();
         }
 
         private void checkBoxAnimateLight_CheckedChanged(object sender, EventArgs e)
@@ -244,6 +263,12 @@ namespace Graphics3D
             painter.rasterizer.colorPicker.lightDirection
                 = Vector3.Normalize(lightAnimator.MoveLightSource());
 
+            DrawScene();
+        }
+
+        private void radioButtonConst_CheckedChanged(object sender, EventArgs e)
+        {
+            InvalidateInterpolationMethod();
             DrawScene();
         }
     }

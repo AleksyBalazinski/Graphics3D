@@ -3,6 +3,7 @@
     internal enum InterpolantType
     {
         Color,
-        NormalVector
+        NormalVector,
+        Constant
     }
 }

@@ -34,10 +34,10 @@ namespace Graphics3D.Rendering
             }
         }
 
-        public void ClearCanvas()
+        public void ClearCanvas(Color color)
         {
             using var g = Graphics.FromImage(canvas.Bitmap);
-            g.Clear(Color.White);
+            g.Clear(color);
         }
 
         public void DrawFaceBoundary(List<VertexInfo> screenPoints)
@@ -70,7 +70,7 @@ namespace Graphics3D.Rendering
                 return;
             }
             List<VertexInfo> ascY = screenPoints.OrderBy(v => v.Y).ToList();
-            int ymin = (int)ascY[0].Y, ymax = (int)ascY[^1].Y;
+            int ymin = (int)ascY[0].Y, ymax = (int)(ascY[^1].Y + 0.5f);
             List<VertexInfo> scanned = new();
             List<ActiveEdge> activeEdges = new();
             int k = 0; int verticesCount = screenPoints.Count;
@@ -121,7 +121,7 @@ namespace Graphics3D.Rendering
 
         private void FillBetween(int xStart, int xEnd, int y, Shape shape, List<VertexInfo> vertices)
         {
-            for (int x = xStart + 1; x <= xEnd; x++)
+            for (int x = xStart; x <= xEnd; x++)
             {
                 float z = Utils.Interpolate(vertices, vertices.Select(v => v.depth).ToList(), x, y);
                 if (z > zBuffer[x, y])

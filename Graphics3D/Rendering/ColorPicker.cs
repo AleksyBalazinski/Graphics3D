@@ -31,6 +31,10 @@ namespace Graphics3D.Rendering
                     = Utils.Interpolate(vertices, vertices.Select(v => v.normal).ToList(), x, y); // interpolate normal
                 color = ApplyLighting(shape, interpolatedNormal);
             }
+            else if (interpolantType == InterpolantType.Constant)
+            {
+                color = shape.color;
+            }
             else
             {
                 throw new NotSupportedException("Unknown interpolant type");

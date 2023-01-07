@@ -53,12 +53,15 @@ namespace Graphics3D.Rendering
         private Matrix4x4 viewMatrix;
         private Matrix4x4 projectionMatrix;
 
+        private readonly float near = 3f;
+        private readonly float far = 1000f;
+
         public VertexProcessor(int canvasWidth, int canvasHeight)
         {
             this.canvasWidth = canvasWidth;
             this.canvasHeight = canvasHeight;
             CameraPosition = new Vector3(1, 1, 1);
-            FieldOfView = 1;
+            FieldOfView = 0.8f;
             Zoom = 1;
             lightColor = new RGB(1, 1, 1);
             lightDirection = new Vector3(0, 0, 1);
@@ -71,7 +74,7 @@ namespace Graphics3D.Rendering
 
         private void CalculateProjection()
         {
-            projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(FieldOfView, (float)canvasWidth / canvasHeight, 1, 100);
+            projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(FieldOfView, (float)canvasWidth / canvasHeight, near, far);
         }
 
         public List<VertexInfo> ProcessFace(Face face, Matrix4x4 modelMatrix)
@@ -94,6 +97,10 @@ namespace Graphics3D.Rendering
                 var worldSpaceCoordinates = Vector4.Transform(location, modelMatrix);
                 var eyeCoordinates = Vector4.Transform(worldSpaceCoordinates, viewMatrix);
                 var clipCoordinates = Vector4.Transform(eyeCoordinates, projectionMatrix);
+
+                if (clipCoordinates.Z < 0 || clipCoordinates.Z > far)
+                    return new List<VertexInfo>();
+
                 Vector3 normalized = new(clipCoordinates.X / clipCoordinates.W, clipCoordinates.Y / clipCoordinates.W, clipCoordinates.Z / clipCoordinates.W);
 
                 (float screenX, float screenY) = ToScreen(normalized);

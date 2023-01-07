@@ -36,6 +36,7 @@
             this.buttonLoad = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.groupBoxInterpolationMethod = new System.Windows.Forms.GroupBox();
+            this.radioButtonConst = new System.Windows.Forms.RadioButton();
             this.radioButtonColors = new System.Windows.Forms.RadioButton();
             this.radioButtonNormals = new System.Windows.Forms.RadioButton();
             this.groupBoxCamMode = new System.Windows.Forms.GroupBox();
@@ -168,14 +169,27 @@
             // 
             // groupBoxInterpolationMethod
             // 
+            this.groupBoxInterpolationMethod.Controls.Add(this.radioButtonConst);
             this.groupBoxInterpolationMethod.Controls.Add(this.radioButtonColors);
             this.groupBoxInterpolationMethod.Controls.Add(this.radioButtonNormals);
-            this.groupBoxInterpolationMethod.Location = new System.Drawing.Point(11, 367);
+            this.groupBoxInterpolationMethod.Location = new System.Drawing.Point(5, 328);
             this.groupBoxInterpolationMethod.Name = "groupBoxInterpolationMethod";
-            this.groupBoxInterpolationMethod.Size = new System.Drawing.Size(90, 79);
+            this.groupBoxInterpolationMethod.Size = new System.Drawing.Size(90, 100);
             this.groupBoxInterpolationMethod.TabIndex = 37;
             this.groupBoxInterpolationMethod.TabStop = false;
             this.groupBoxInterpolationMethod.Text = "Interpolation method";
+            // 
+            // radioButtonConst
+            // 
+            this.radioButtonConst.AutoSize = true;
+            this.radioButtonConst.Location = new System.Drawing.Point(5, 76);
+            this.radioButtonConst.Name = "radioButtonConst";
+            this.radioButtonConst.Size = new System.Drawing.Size(71, 19);
+            this.radioButtonConst.TabIndex = 33;
+            this.radioButtonConst.TabStop = true;
+            this.radioButtonConst.Text = "constant";
+            this.radioButtonConst.UseVisualStyleBackColor = true;
+            this.radioButtonConst.CheckedChanged += new System.EventHandler(this.radioButtonConst_CheckedChanged);
             // 
             // radioButtonColors
             // 
@@ -208,7 +222,7 @@
             this.groupBoxCamMode.Controls.Add(this.radioButtonCamTracking);
             this.groupBoxCamMode.Location = new System.Drawing.Point(3, 3);
             this.groupBoxCamMode.Name = "groupBoxCamMode";
-            this.groupBoxCamMode.Size = new System.Drawing.Size(99, 127);
+            this.groupBoxCamMode.Size = new System.Drawing.Size(99, 103);
             this.groupBoxCamMode.TabIndex = 36;
             this.groupBoxCamMode.TabStop = false;
             this.groupBoxCamMode.Text = "Camera mode";
@@ -248,7 +262,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(5, 452);
+            this.label8.Location = new System.Drawing.Point(3, 445);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(12, 15);
             this.label8.TabIndex = 35;
@@ -256,7 +270,7 @@
             // 
             // trackBarLightZ
             // 
-            this.trackBarLightZ.Location = new System.Drawing.Point(19, 452);
+            this.trackBarLightZ.Location = new System.Drawing.Point(19, 434);
             this.trackBarLightZ.Maximum = 50;
             this.trackBarLightZ.Minimum = 1;
             this.trackBarLightZ.Name = "trackBarLightZ";
@@ -268,7 +282,7 @@
             // checkBoxAnimateLight
             // 
             this.checkBoxAnimateLight.AutoSize = true;
-            this.checkBoxAnimateLight.Location = new System.Drawing.Point(4, 503);
+            this.checkBoxAnimateLight.Location = new System.Drawing.Point(0, 485);
             this.checkBoxAnimateLight.Name = "checkBoxAnimateLight";
             this.checkBoxAnimateLight.Size = new System.Drawing.Size(96, 19);
             this.checkBoxAnimateLight.TabIndex = 33;
@@ -284,7 +298,7 @@
             0,
             0,
             65536});
-            this.numericUpDownCamZ.Location = new System.Drawing.Point(22, 331);
+            this.numericUpDownCamZ.Location = new System.Drawing.Point(24, 300);
             this.numericUpDownCamZ.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.numericUpDownCamZ.Minimum = new decimal(new int[] {
             100,
@@ -309,7 +323,7 @@
             0,
             0,
             65536});
-            this.numericUpDownCamY.Location = new System.Drawing.Point(23, 299);
+            this.numericUpDownCamY.Location = new System.Drawing.Point(24, 273);
             this.numericUpDownCamY.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.numericUpDownCamY.Minimum = new decimal(new int[] {
             100,
@@ -334,7 +348,7 @@
             0,
             0,
             65536});
-            this.numericUpDownCamX.Location = new System.Drawing.Point(24, 265);
+            this.numericUpDownCamX.Location = new System.Drawing.Point(24, 241);
             this.numericUpDownCamX.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.numericUpDownCamX.Minimum = new decimal(new int[] {
             100,
@@ -354,7 +368,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(5, 331);
+            this.label6.Location = new System.Drawing.Point(3, 302);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(12, 15);
             this.label6.TabIndex = 25;
@@ -363,7 +377,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(4, 301);
+            this.label5.Location = new System.Drawing.Point(3, 275);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(13, 15);
             this.label5.TabIndex = 24;
@@ -372,7 +386,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(5, 273);
+            this.label4.Location = new System.Drawing.Point(5, 243);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(13, 15);
             this.label4.TabIndex = 23;
@@ -381,7 +395,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(5, 199);
+            this.label3.Location = new System.Drawing.Point(9, 175);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(73, 15);
             this.label3.TabIndex = 19;
@@ -389,20 +403,20 @@
             // 
             // trackBarFov
             // 
-            this.trackBarFov.Location = new System.Drawing.Point(3, 216);
+            this.trackBarFov.Location = new System.Drawing.Point(3, 192);
             this.trackBarFov.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.trackBarFov.Maximum = 120;
             this.trackBarFov.Minimum = 30;
             this.trackBarFov.Name = "trackBarFov";
             this.trackBarFov.Size = new System.Drawing.Size(97, 45);
             this.trackBarFov.TabIndex = 18;
-            this.trackBarFov.Value = 100;
+            this.trackBarFov.Value = 80;
             this.trackBarFov.Scroll += new System.EventHandler(this.trackBarFov_Scroll);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(9, 133);
+            this.label2.Location = new System.Drawing.Point(9, 109);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(39, 15);
             this.label2.TabIndex = 17;
@@ -410,7 +424,7 @@
             // 
             // trackBarScale
             // 
-            this.trackBarScale.Location = new System.Drawing.Point(3, 151);
+            this.trackBarScale.Location = new System.Drawing.Point(3, 127);
             this.trackBarScale.Maximum = 100;
             this.trackBarScale.Name = "trackBarScale";
             this.trackBarScale.Size = new System.Drawing.Size(104, 45);
@@ -499,5 +513,6 @@
         private RadioButton radioButtonCamFixed;
         private GroupBox groupBoxInterpolationMethod;
         private GroupBox groupBoxCamMode;
+        private RadioButton radioButtonConst;
     }
 }
