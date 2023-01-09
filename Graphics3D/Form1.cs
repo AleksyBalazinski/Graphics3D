@@ -45,11 +45,11 @@ namespace Graphics3D
         {
             string carObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\car.obj"));
             List<Face> faces = ObjFileReader.Read(carObj);
-            shapes.Add(new Shape(faces, shapes.Count, new RGB(random.NextSingle(), random.NextSingle(), random.NextSingle()), new Vector3(-1, 0, 0)));
+            shapes.Add(new Shape(faces, shapes.Count, new RGB(Color.Blue), -Vector3.UnitX));
 
             string sphereObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\cube.obj"));
             faces = ObjFileReader.Read(sphereObj);
-            shapes.Add(new Shape(faces, shapes.Count, new RGB(random.NextSingle(), random.NextSingle(), random.NextSingle()), new Vector3(-1, 0, 0)));
+            shapes.Add(new Shape(faces, shapes.Count, new RGB(0, 1, 0.4f), Vector3.UnitX));
             shapes[1].Translate(-10, 0, 0);
 
             DrawScene();
@@ -83,15 +83,15 @@ namespace Graphics3D
         }
 
         private bool darken = true;
-        private int r = 0;
-        private int g = 0;
-        private int b = 0;
+        private int r = 255;
+        private int g = 255;
+        private int b = 255;
 
         private void TimerEventProcessor(object? sender, EventArgs e)
         {
             ticks++;
 
-            if (darken)
+            /*if (darken)
             {
                 r++; g++; b++;
                 if (r == 255)
@@ -102,7 +102,7 @@ namespace Graphics3D
                 r--; g--; b--;
                 if (r == 0)
                     darken = true;
-            }
+            }*/
 
             painter.rasterizer.ClearCanvas(Color.FromArgb(r, g, b));
             shapes[0].ResetPosition();
@@ -174,7 +174,7 @@ namespace Graphics3D
         private void ClearScene()
         {
             shapes.Clear();
-            painter.rasterizer.ClearCanvas(Color.LightSkyBlue);
+            painter.rasterizer.ClearCanvas(Color.White);
 
             DrawScene();
         }
@@ -182,7 +182,7 @@ namespace Graphics3D
         private void trackBarScale_Scroll(object sender, EventArgs e)
         {
             painter.vertexProcessor.Zoom = trackBarScale.Value * 5;
-            painter.rasterizer.ClearCanvas(Color.LightSkyBlue);
+            painter.rasterizer.ClearCanvas(Color.White);
 
             DrawScene();
         }
@@ -190,7 +190,7 @@ namespace Graphics3D
         private void trackBarFov_Scroll(object sender, EventArgs e)
         {
             painter.vertexProcessor.FieldOfView = trackBarFov.Value / 100f;
-            painter.rasterizer.ClearCanvas(Color.LightSkyBlue);
+            painter.rasterizer.ClearCanvas(Color.White);
 
             DrawScene();
         }
@@ -213,7 +213,7 @@ namespace Graphics3D
         private void InvalidateCameraPosition()
         {
             painter.vertexProcessor.CameraPosition = new Vector3((float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
-            painter.rasterizer.ClearCanvas(Color.LightSkyBlue);
+            painter.rasterizer.ClearCanvas(Color.White);
             DrawScene();
         }
 

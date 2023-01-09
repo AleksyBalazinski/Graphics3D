@@ -1,4 +1,5 @@
 ﻿using Graphics3D.Model;
+using System.Diagnostics;
 using System.Numerics;
 
 namespace Graphics3D.Rendering
@@ -17,23 +18,23 @@ namespace Graphics3D.Rendering
         }
 
         // color in point (x, y) for uniformly colored object
-        public (int, int, int) GetColor(int x, int y, List<VertexInfo> vertices, Shape shape)
+        public (int, int, int) GetColor(int x, int y, List<VertexInfo> vertices, Shape shape, float depth)
         {
             RGB color;
             if (interpolantType == InterpolantType.Color)
             {
-                var colors = vertices.Select(v => ApplyLighting(shape, v.normal)).ToList();
+                var colors = vertices.Select(v => ApplyLighting(shape, v.normal, depth)).ToList();
                 color = Utils.Interpolate(vertices, colors, x, y); // interpolate color
             }
             else if (interpolantType == InterpolantType.NormalVector)
             {
                 Vector3 interpolatedNormal
                     = Utils.Interpolate(vertices, vertices.Select(v => v.normal).ToList(), x, y); // interpolate normal
-                color = ApplyLighting(shape, interpolatedNormal);
+                color = ApplyLighting(shape, interpolatedNormal, depth);
             }
             else if (interpolantType == InterpolantType.Constant)
             {
-                color = shape.color;
+                color = ApplyLighting(shape, vertices[0].normal, depth);
             }
             else
             {
@@ -43,7 +44,7 @@ namespace Graphics3D.Rendering
             return color.ToRGB255();
         }
 
-        private RGB ApplyLighting(Shape shape, Vector3 normal)
+        private RGB ApplyLighting(Shape shape, Vector3 normal, float depth)
         {
             Vector3 vert = new(0, 0, 1);
             Vector3 N = Vector3.Normalize(normal);
@@ -61,7 +62,17 @@ namespace Graphics3D.Rendering
             var c = lightColor * shape.color;
             var coef1 = shape.kd * c;
             var coef2 = shape.ks * c;
-            return cos1 * coef1 + MathF.Pow(cos2, shape.m) * coef2;
+            return Fog(depth) * (cos1 * coef1 + MathF.Pow(cos2, shape.m) * coef2) + (1 - Fog(depth)) * new RGB(Color.White);
+        }
+
+        private static float Fog(float depth)
+        {
+            if (depth > 30)
+                return 0;
+            if (depth < 0.1)
+                return 1;
+            return (30 - depth) / (30 - 0.1f);
+            
         }
     }
 }

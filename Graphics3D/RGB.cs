@@ -11,6 +11,13 @@
             this.r = r; this.g = g; this.b = b;
         }
 
+        public RGB(Color color)
+        {
+            r = color.R / 255f;
+            g = color.G / 255f;
+            b = color.B / 255f;
+        }
+
         public (int, int, int) ToRGB255()
         {
             return (r > 1 ? 255 : (int)(r * 255),

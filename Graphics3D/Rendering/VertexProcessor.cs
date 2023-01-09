@@ -1,4 +1,5 @@
 ﻿using Graphics3D.Model;
+using System.Diagnostics;
 using System.Numerics;
 
 namespace Graphics3D.Rendering
@@ -53,7 +54,7 @@ namespace Graphics3D.Rendering
         private Matrix4x4 viewMatrix;
         private Matrix4x4 projectionMatrix;
 
-        private readonly float near = 3f;
+        private readonly float near = 0.1f;
         private readonly float far = 1000f;
 
         public VertexProcessor(int canvasWidth, int canvasHeight)
@@ -87,7 +88,7 @@ namespace Graphics3D.Rendering
                 ws3List.Add(new Vector3(worldSpaceCoordinates.X, worldSpaceCoordinates.Y, worldSpaceCoordinates.Z));
             }
             var normal = Vector3.Cross(ws3List[1] - ws3List[0], ws3List[2] - ws3List[0]);
-            if (Vector3.Dot(ws3List[0] - CameraPosition, normal) >= 0)
+            if (Vector3.Dot(ws3List[0] - CameraPosition, normal) == 0)
                 return new List<VertexInfo>();
 
             List<VertexInfo> faceInfo = new();
@@ -105,7 +106,7 @@ namespace Graphics3D.Rendering
 
                 (float screenX, float screenY) = ToScreen(normalized);
                 var worldSpaceNormal = Vector3.TransformNormal(vertex.NormalVector, modelMatrix);
-                faceInfo.Add(new VertexInfo(screenX, screenY, normalized.Z, worldSpaceNormal));
+                faceInfo.Add(new VertexInfo(screenX, screenY, clipCoordinates.Z, worldSpaceNormal));
             }
 
             return faceInfo;

@@ -70,7 +70,7 @@ namespace Graphics3D.Rendering
                 return;
             }
             List<VertexInfo> ascY = screenPoints.OrderBy(v => v.Y).ToList();
-            int ymin = (int)ascY[0].Y, ymax = (int)(ascY[^1].Y + 0.5f);
+            int ymin = (int)ascY[0].Y, ymax = (int)ascY[^1].Y;
             List<VertexInfo> scanned = new();
             List<ActiveEdge> activeEdges = new();
             int k = 0; int verticesCount = screenPoints.Count;
@@ -127,7 +127,7 @@ namespace Graphics3D.Rendering
                 if (z > zBuffer[x, y])
                     continue;
 
-                var (r, g, b) = colorPicker.GetColor(x, y, vertices, shape);
+                var (r, g, b) = colorPicker.GetColor(x, y, vertices, shape, z);
                 canvas.SetPixel(x, y, Color.FromArgb(r, g, b));
 
                 zBuffer[x, y] = z;
