@@ -1,5 +1,4 @@
 ﻿using Graphics3D.Model;
-using System.Diagnostics;
 using System.Numerics;
 
 namespace Graphics3D.Rendering
@@ -42,9 +41,6 @@ namespace Graphics3D.Rendering
         public float Zoom { get; set; }
         public bool CullBackFaces = false;
 
-        public RGB lightColor;
-        public Vector3 lightDirection;
-
         private Vector3 cameraPosition;
         private Vector3 cameraTarget;
         private float fieldOfView;
@@ -64,8 +60,6 @@ namespace Graphics3D.Rendering
             CameraPosition = new Vector3(1, 1, 1);
             FieldOfView = 0.8f;
             Zoom = 1;
-            lightColor = new RGB(1, 1, 1);
-            lightDirection = new Vector3(0, 0, 1);
         }
 
         private void CalculateView()

@@ -66,6 +66,11 @@ namespace Graphics3D.Model
             ModelMatrix *= rotation;
         }
 
+        public void Scale(float factor)
+        {
+            ModelMatrix *= Matrix4x4.CreateScale(factor);
+        }
+
         public void ResetPosition()
         {
             ModelMatrix = Matrix4x4.Identity;

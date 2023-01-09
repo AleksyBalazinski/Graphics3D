@@ -26,10 +26,10 @@ namespace Graphics3D.Rendering
                 faceInfos[index] = vertexProcessor.ProcessFace(shape.Faces[index], modelMatrix);
             });
 
-            for (int i = 0; i < shape.Faces.Count; i++)
+            Parallel.For(0, shape.Faces.Count, index =>
             {
-                rasterizer.FillFace(faceInfos[i], shape);
-            }
+                rasterizer.FillFace(faceInfos[index], shape);
+            });
         }
 
         public void DrawMesh(Shape shape)

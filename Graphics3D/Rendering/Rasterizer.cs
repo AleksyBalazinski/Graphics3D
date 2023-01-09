@@ -60,15 +60,13 @@ namespace Graphics3D.Rendering
 
         public void FillFace(List<VertexInfo> screenPoints, Shape shape)
         {
-            if (screenPoints.Count == 0)
-            {
+            if (screenPoints.Count == 0) 
                 return;
-            }
+
             bool containedInCanvas = screenPoints.All(p => p.X >= 0 && p.X <= canvasWidth && p.Y >= 0 && p.Y <= canvasHeight);
             if (!containedInCanvas)
-            {
                 return;
-            }
+
             List<VertexInfo> ascY = screenPoints.OrderBy(v => v.Y).ToList();
             int ymin = (int)ascY[0].Y, ymax = (int)ascY[^1].Y;
             List<VertexInfo> scanned = new();

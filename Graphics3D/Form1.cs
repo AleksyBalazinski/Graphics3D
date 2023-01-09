@@ -1,6 +1,7 @@
 using Graphics3D.Model;
 using Graphics3D.Rendering;
 using System.Numerics;
+using System.Reflection;
 
 namespace Graphics3D
 {
@@ -45,12 +46,25 @@ namespace Graphics3D
         {
             string carObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\car.obj"));
             List<Face> faces = ObjFileReader.Read(carObj);
-            shapes.Add(new Shape(faces, shapes.Count, new RGB(Color.Blue), -Vector3.UnitX));
+            shapes.Add(new Shape(faces, shapes.Count, new RGB(Color.LightBlue), -Vector3.UnitX));
 
-            string sphereObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\cube.obj"));
+            string sphereObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\sphere.obj"));
             faces = ObjFileReader.Read(sphereObj);
-            shapes.Add(new Shape(faces, shapes.Count, new RGB(0, 1, 0.4f), Vector3.UnitX));
+            shapes.Add(new Shape(faces, shapes.Count, new RGB(Color.PaleGreen), Vector3.UnitX));
+            shapes[1].Scale(2);
             shapes[1].Translate(-10, 0, 0);
+
+            string cubeObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\cube.obj"));
+            faces = ObjFileReader.Read(cubeObj);
+            shapes.Add(new Shape(faces, shapes.Count, new RGB(Color.IndianRed), Vector3.UnitX));
+            shapes[2].Scale(2);
+            shapes[2].Translate(-10, -7, 0);
+
+            painter.rasterizer.colorPicker.lightSources.Add(
+                new LightSource(LightSource.Type.Point, new Vector3(0, 0, 1), new RGB(Color.White)));
+
+            painter.rasterizer.colorPicker.lightSources.Add(
+                new LightSource(LightSource.Type.Point, new Vector3(1, 0, 0), new RGB(Color.Yellow)));
 
             DrawScene();
         }
@@ -146,7 +160,7 @@ namespace Graphics3D
 
             if (animateLight)
             {
-                painter.rasterizer.colorPicker.lightDirection =
+                painter.rasterizer.colorPicker.lightSources[0].lightDirection =
                     Vector3.Normalize(lightAnimator.MoveLightSource());
             }
 
@@ -260,7 +274,7 @@ namespace Graphics3D
         private void trackBarLightZ_Scroll(object sender, EventArgs e)
         {
             lightAnimator.Z = trackBarLightZ.Value;
-            painter.rasterizer.colorPicker.lightDirection
+            painter.rasterizer.colorPicker.lightSources[0].lightDirection
                 = Vector3.Normalize(lightAnimator.MoveLightSource());
 
             DrawScene();
