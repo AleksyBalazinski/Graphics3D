@@ -13,6 +13,7 @@ namespace Graphics3D.Rendering
         private readonly int canvasHeight;
         private readonly DirectBitmap canvas;
         private readonly float[,] zBuffer;
+        private readonly object[,] locks;
 
         public Rasterizer(DirectBitmap canvas)
         {
@@ -21,6 +22,15 @@ namespace Graphics3D.Rendering
             canvasHeight = canvas.Height;
             zBuffer = new float[canvasWidth, canvasHeight];
             colorPicker = new ColorPicker();
+
+            locks = new object[canvasWidth, canvasHeight];
+            for (int i = 0; i < canvasWidth; i++)
+            {
+                for (int j = 0; j < canvasHeight; j++)
+                {
+                    locks[i, j] = new object();
+                }
+            }
         }
 
         public void ClearDepthBuffer()
@@ -60,7 +70,7 @@ namespace Graphics3D.Rendering
 
         public void FillFace(List<VertexInfo> screenPoints, Shape shape)
         {
-            if (screenPoints.Count == 0) 
+            if (screenPoints.Count == 0)
                 return;
 
             bool containedInCanvas = screenPoints.All(p => p.X >= 0 && p.X <= canvasWidth && p.Y >= 0 && p.Y <= canvasHeight);
@@ -122,13 +132,16 @@ namespace Graphics3D.Rendering
             for (int x = xStart; x <= xEnd; x++)
             {
                 float z = Utils.Interpolate(vertices, vertices.Select(v => v.depth).ToList(), x, y);
-                if (z > zBuffer[x, y])
-                    continue;
 
-                var (r, g, b) = colorPicker.GetColor(x, y, vertices, shape, z);
-                canvas.SetPixel(x, y, Color.FromArgb(r, g, b));
+                lock (locks[x, y])
+                {
+                    if (z > zBuffer[x, y])
+                        continue;
 
-                zBuffer[x, y] = z;
+                    var (r, g, b) = colorPicker.GetColor(x, y, vertices, shape, z);
+                    canvas.SetPixel(x, y, Color.FromArgb(r, g, b));
+                    zBuffer[x, y] = z;
+                }
             }
         }
 

@@ -4,11 +4,11 @@ namespace Graphics3D.Rendering
 {
     internal class LightSource
     {
-        public LightSource(Type type, Vector3 lightDirection, RGB lightColor) 
-        { 
-            this.lightDirection= lightDirection;
-            this.lightColor= lightColor;
-            this.type= type;
+        public LightSource(Type type, Vector3 lightDirection, RGB lightColor)
+        {
+            this.lightDirection = lightDirection;
+            this.lightColor = lightColor;
+            this.type = type;
         }
 
         public LightSource(Type type, Vector3 lightDirection, RGB lightColor, float e)
@@ -16,7 +16,7 @@ namespace Graphics3D.Rendering
             this.lightDirection = lightDirection;
             this.lightColor = lightColor;
             this.type = type;
-            this.e= e;
+            this.e = e;
         }
 
         public Vector3 lightDirection;

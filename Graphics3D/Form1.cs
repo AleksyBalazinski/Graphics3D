@@ -1,7 +1,7 @@
 using Graphics3D.Model;
 using Graphics3D.Rendering;
+using System.Diagnostics;
 using System.Numerics;
-using System.Reflection;
 
 namespace Graphics3D
 {
@@ -164,7 +164,11 @@ namespace Graphics3D
                     Vector3.Normalize(lightAnimator.MoveLightSource());
             }
 
+            Stopwatch sw = Stopwatch.StartNew();
             DrawScene();
+            sw.Stop();
+            //if(sw.ElapsedMilliseconds > 200)
+            Debug.WriteLine("Elapsed = {0}", sw.ElapsedMilliseconds);
         }
 
         private void DrawScene()
