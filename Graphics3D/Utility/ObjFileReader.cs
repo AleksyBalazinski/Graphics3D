@@ -1,7 +1,7 @@
 ﻿using Graphics3D.Model;
 using System.Numerics;
 
-namespace Graphics3D
+namespace Graphics3D.Utility
 {
     internal class ObjFileReader
     {

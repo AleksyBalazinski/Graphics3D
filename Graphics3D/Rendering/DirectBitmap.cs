@@ -1,7 +1,7 @@
 ﻿using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
-namespace Graphics3D
+namespace Graphics3D.Rendering
 {
     public class DirectBitmap : IDisposable
     {
@@ -17,14 +17,14 @@ namespace Graphics3D
         {
             Width = width;
             Height = height;
-            Bits = new Int32[width * height];
+            Bits = new int[width * height];
             BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
             Bitmap = new Bitmap(width, height, width * 4, PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
         }
 
         public void SetPixel(int x, int y, Color color)
         {
-            int index = x + (y * Width);
+            int index = x + y * Width;
             int col = color.ToArgb();
 
             Bits[index] = col;
@@ -32,7 +32,7 @@ namespace Graphics3D
 
         public Color GetPixel(int x, int y)
         {
-            int index = x + (y * Width);
+            int index = x + y * Width;
             int col = Bits[index];
             Color result = Color.FromArgb(col);
 

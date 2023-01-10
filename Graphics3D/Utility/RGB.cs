@@ -1,4 +1,4 @@
-﻿namespace Graphics3D
+﻿namespace Graphics3D.Utility
 {
     internal struct RGB
     {

@@ -35,6 +35,7 @@
             this.buttonAnimationStart = new System.Windows.Forms.Button();
             this.buttonLoad = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.checkBoxSwinging = new System.Windows.Forms.CheckBox();
             this.groupBoxInterpolationMethod = new System.Windows.Forms.GroupBox();
             this.radioButtonConst = new System.Windows.Forms.RadioButton();
             this.radioButtonColors = new System.Windows.Forms.RadioButton();
@@ -58,7 +59,6 @@
             this.trackBarScale = new System.Windows.Forms.TrackBar();
             this.panel3 = new System.Windows.Forms.Panel();
             this.buttonClear = new System.Windows.Forms.Button();
-            this.checkBoxSwinging = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.panel1.SuspendLayout();
@@ -169,6 +169,16 @@
             this.panel2.Size = new System.Drawing.Size(114, 531);
             this.panel2.TabIndex = 4;
             // 
+            // checkBoxSwinging
+            // 
+            this.checkBoxSwinging.AutoSize = true;
+            this.checkBoxSwinging.Location = new System.Drawing.Point(6, 506);
+            this.checkBoxSwinging.Name = "checkBoxSwinging";
+            this.checkBoxSwinging.Size = new System.Drawing.Size(74, 19);
+            this.checkBoxSwinging.TabIndex = 38;
+            this.checkBoxSwinging.Text = "swinging";
+            this.checkBoxSwinging.UseVisualStyleBackColor = true;
+            // 
             // groupBoxInterpolationMethod
             // 
             this.groupBoxInterpolationMethod.Controls.Add(this.radioButtonConst);
@@ -238,6 +248,7 @@
             this.radioButtonCamTpp.TabIndex = 39;
             this.radioButtonCamTpp.Text = "TPP";
             this.radioButtonCamTpp.UseVisualStyleBackColor = true;
+            this.radioButtonCamTpp.CheckedChanged += new System.EventHandler(this.radioButtonCamTpp_CheckedChanged);
             // 
             // radioButtonCamFixed
             // 
@@ -250,6 +261,7 @@
             this.radioButtonCamFixed.TabStop = true;
             this.radioButtonCamFixed.Text = "fixed";
             this.radioButtonCamFixed.UseVisualStyleBackColor = true;
+            this.radioButtonCamFixed.CheckedChanged += new System.EventHandler(this.radioButtonCamFixed_CheckedChanged);
             // 
             // radioButtonCamTracking
             // 
@@ -260,6 +272,7 @@
             this.radioButtonCamTracking.TabIndex = 38;
             this.radioButtonCamTracking.Text = "tracking";
             this.radioButtonCamTracking.UseVisualStyleBackColor = true;
+            this.radioButtonCamTracking.CheckedChanged += new System.EventHandler(this.radioButtonCamTracking_CheckedChanged);
             // 
             // label8
             // 
@@ -451,16 +464,6 @@
             this.buttonClear.Text = "Clear";
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
-            // 
-            // checkBoxSwinging
-            // 
-            this.checkBoxSwinging.AutoSize = true;
-            this.checkBoxSwinging.Location = new System.Drawing.Point(6, 506);
-            this.checkBoxSwinging.Name = "checkBoxSwinging";
-            this.checkBoxSwinging.Size = new System.Drawing.Size(74, 19);
-            this.checkBoxSwinging.TabIndex = 38;
-            this.checkBoxSwinging.Text = "swinging";
-            this.checkBoxSwinging.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 

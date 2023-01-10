@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using Graphics3D.Utility;
+using System.Numerics;
 
 namespace Graphics3D.Rendering
 {

@@ -1,9 +1,9 @@
 ﻿using Graphics3D.Rendering;
 using System.Numerics;
 
-namespace Graphics3D
+namespace Graphics3D.Utility
 {
-    internal class Utils
+    internal class MathUtils
     {
         public static T Interpolate<T>(List<VertexInfo> vertices, List<T> values, float x, float y)
         {

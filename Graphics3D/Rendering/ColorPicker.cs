@@ -1,4 +1,5 @@
 ﻿using Graphics3D.Model;
+using Graphics3D.Utility;
 using System.Numerics;
 
 namespace Graphics3D.Rendering
@@ -25,12 +26,12 @@ namespace Graphics3D.Rendering
             if (interpolantType == InterpolantType.Color)
             {
                 var colors = vertices.Select(v => ApplyLighting(shape, v.normal, depth, worldSpaceLocation)).ToList();
-                color = Utils.Interpolate(vertices, colors, x, y); // interpolate color
+                color = MathUtils.Interpolate(vertices, colors, x, y); // interpolate color
             }
             else if (interpolantType == InterpolantType.NormalVector)
             {
                 Vector3 interpolatedNormal
-                    = Utils.Interpolate(vertices, vertices.Select(v => v.normal).ToList(), x, y); // interpolate normal
+                    = MathUtils.Interpolate(vertices, vertices.Select(v => v.normal).ToList(), x, y); // interpolate normal
                 color = ApplyLighting(shape, interpolatedNormal, depth, worldSpaceLocation);
             }
             else if (interpolantType == InterpolantType.Constant)

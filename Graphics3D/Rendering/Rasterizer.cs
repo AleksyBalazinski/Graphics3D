@@ -1,4 +1,5 @@
 ﻿using Graphics3D.Model;
+using Graphics3D.Utility;
 using System.Numerics;
 
 namespace Graphics3D.Rendering
@@ -98,11 +99,11 @@ namespace Graphics3D.Rendering
                     VertexInfo next = screenPoints[si == verticesCount - 1 ? 0 : si + 1];
 
                     if (prev.Y > s.Y)
-                        activeEdges.Add(new ActiveEdge(prev, s, Utils.Slope(prev, s), (int)s.X));
+                        activeEdges.Add(new ActiveEdge(prev, s, MathUtils.Slope(prev, s), (int)s.X));
                     if (prev.Y < s.Y)
                         activeEdges.RemoveAll(ae => ae.start == prev && ae.end == s);
                     if (next.Y > s.Y)
-                        activeEdges.Add(new ActiveEdge(s, next, Utils.Slope(s, next), (int)s.X));
+                        activeEdges.Add(new ActiveEdge(s, next, MathUtils.Slope(s, next), (int)s.X));
                     if (next.Y < s.Y)
                         activeEdges.RemoveAll(ae => ae.start == s && ae.end == next);
                 }
@@ -132,8 +133,8 @@ namespace Graphics3D.Rendering
         {
             for (int x = xStart; x <= xEnd; x++)
             {
-                float z = Utils.Interpolate(vertices, vertices.Select(v => v.depth).ToList(), x, y);
-                Vector4 worldSpaceLocation = Utils.Interpolate(vertices, vertices.Select(v => v.worldSpaceLocation).ToList(), x, y);
+                float z = MathUtils.Interpolate(vertices, vertices.Select(v => v.depth).ToList(), x, y);
+                Vector4 worldSpaceLocation = MathUtils.Interpolate(vertices, vertices.Select(v => v.worldSpaceLocation).ToList(), x, y);
 
                 lock (locks[x, y])
                 {

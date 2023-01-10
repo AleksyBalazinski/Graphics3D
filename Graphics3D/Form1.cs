@@ -1,6 +1,6 @@
 using Graphics3D.Model;
 using Graphics3D.Rendering;
-using System.Diagnostics;
+using Graphics3D.Utility;
 using System.Numerics;
 
 namespace Graphics3D
@@ -17,6 +17,8 @@ namespace Graphics3D
         readonly Random random = new();
         readonly LightAnimator lightAnimator;
         const float initialRadius = 30;
+
+        readonly Animation animation;
 
         public Form1()
         {
@@ -38,37 +40,10 @@ namespace Graphics3D
 
             lightAnimator = new LightAnimator(new Vector3(initialRadius, 0, 20), 5);
 
+            animation = new Animation(painter, shapes, lightAnimator);
+
             painter.DrawCoordinateSystem();
-            InitScene();
-        }
-
-        private void InitScene()
-        {
-            string carObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\car.obj"));
-            List<Face> faces = ObjFileReader.Read(carObj);
-            shapes.Add(new Shape(faces, shapes.Count, new RGB(Color.LightBlue), -Vector3.UnitX));
-
-            string sphereObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\sphere.obj"));
-            faces = ObjFileReader.Read(sphereObj);
-            shapes.Add(new Shape(faces, shapes.Count, new RGB(Color.PaleGreen), Vector3.UnitX));
-            shapes[1].Scale(2);
-            shapes[1].Translate(-10, 0, 0);
-
-            string cubeObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\cube.obj"));
-            faces = ObjFileReader.Read(cubeObj);
-            shapes.Add(new Shape(faces, shapes.Count, new RGB(Color.IndianRed), Vector3.UnitX));
-            shapes[2].Scale(2);
-            shapes[2].Translate(-10, -7, 0);
-
-            painter.rasterizer.colorPicker.lightSources.Add(
-                new LightSource(LightSource.Type.Spotlight, new Vector3(0, 0, 1), new RGB(Color.White), 2, 0.7f, new Vector3(0, 0, 2)));
-
-            painter.rasterizer.colorPicker.lightSources.Add(
-                new LightSource(LightSource.Type.Point, new Vector3(0, 0, 1), new RGB(Color.Gray)));
-
-            painter.rasterizer.colorPicker.lightSources.Add(
-                new LightSource(LightSource.Type.Point, new Vector3(1, 0, 0), new RGB(Color.Yellow)));
-
+            animation.InitScene();
             DrawScene();
         }
 
@@ -91,7 +66,6 @@ namespace Graphics3D
 
         private void buttonAnimationStart_Click(object sender, EventArgs e)
         {
-            animationStart = DateTime.UtcNow;
             timer.Start();
         }
 
@@ -100,133 +74,12 @@ namespace Graphics3D
             timer.Stop();
         }
 
-        private bool darken = true;
-        private bool swingRight = true;
-        private float swingAngle = 0f;
-        private int r = 255;
-        private int g = 255;
-        private int b = 255;
-
-        float prevX = 0;
-        float prevY = 0;
-        DateTime animationStart;
-
-        private void UpdateDayNightTransition(int step)
-        {
-            if (darken)
-            {
-                r -= step; g -= step; b -= step;
-                painter.rasterizer.colorPicker.fogColor.r -= step / 255.0f;
-                painter.rasterizer.colorPicker.fogColor.g -= step / 255.0f;
-                painter.rasterizer.colorPicker.fogColor.b -= step / 255.0f;
-
-                for (int i = 1; i < painter.rasterizer.colorPicker.lightSources.Count; i++)
-                {
-                    var lightSource = painter.rasterizer.colorPicker.lightSources[i];
-
-                    lightSource.lightColor.r -= step / 255.0f;
-                    lightSource.lightColor.g -= step / 255.0f;
-                    lightSource.lightColor.b -= step / 255.0f;
-                }
-
-                if (r == 0)
-                    darken = false;
-            }
-            else
-            {
-                r += step; g += step; b += step;
-                painter.rasterizer.colorPicker.fogColor.r += step / 255.0f;
-                painter.rasterizer.colorPicker.fogColor.g += step / 255.0f;
-                painter.rasterizer.colorPicker.fogColor.b += step / 255.0f;
-
-                for (int i = 1; i < painter.rasterizer.colorPicker.lightSources.Count; i++)
-                {
-                    var lightSource = painter.rasterizer.colorPicker.lightSources[i];
-
-                    lightSource.lightColor.r += step / 255.0f;
-                    lightSource.lightColor.g += step / 255.0f;
-                    lightSource.lightColor.b += step / 255.0f;
-                }
-
-                if (r == 255)
-                    darken = true;
-            }
-        }
-
         private void TimerEventProcessor(object? sender, EventArgs e)
         {
             ticks++;
 
-            UpdateDayNightTransition(step: 1);
-
-            painter.rasterizer.ClearCanvas(Color.FromArgb(r, g, b));
-            shapes[0].ResetPosition();
-
-            float a = 5;
-            var (s, c) = MathF.SinCos(ticks / 20f);
-            float x = (a * c) / (1 + MathF.Pow(s, 2));
-            float y = (a * s * c) / (1 + MathF.Pow(s, 2));
-
-            shapes[0].direction.X = x - prevX;
-            shapes[0].direction.Y = y - prevY;
-            shapes[0].direction.Z = 0;
-
-            float swingAngleStep = 0.05f;
-            float maxSwing = 0.3f;
-
-            if (swingRight)
-            {
-                swingAngle += swingAngleStep;
-                if (swingAngle > maxSwing)
-                    swingRight = false;
-            }
-            else
-            {
-                swingAngle -= swingAngleStep;
-                if (swingAngle < -maxSwing)
-                    swingRight = true;
-            }
-
-            shapes[0].Rotate(swingAngle);
-            shapes[0].ApplyGeneralRotation(Utils.RotateOnto(shapes[0].InitialDirection, shapes[0].direction));
-            shapes[0].Translate(x, y, 0f);
-            prevX = x; prevY = y;
-
-            painter.rasterizer.colorPicker.lightSources[0].location = Vector3.Normalize(shapes[0].direction);
-            painter.rasterizer.colorPicker.lightSources[0].lightDirection = -Vector3.Normalize(shapes[0].direction);
-
-            if (radioButtonCamFixed.Checked)
-            {
-                painter.vertexProcessor.CameraTarget = new Vector3(0);
-                painter.vertexProcessor.CameraPosition = new Vector3((float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
-            }
-            if (radioButtonCamTracking.Checked)
-            {
-                painter.vertexProcessor.CameraTarget = shapes[0].Position;
-            }
-            if (radioButtonCamTpp.Checked)
-            {
-                float camDist = 3;
-                float targetDist = 10;
-                Vector3 camElevation = new Vector3(0, 0, 4f);
-                Vector3 camPosition = shapes[0].Position - (Vector3.Normalize(shapes[0].direction) * camDist) + camElevation;
-                Vector3 camTarget = shapes[0].Position + Vector3.Normalize(shapes[0].direction) * targetDist;
-                painter.vertexProcessor.CameraPosition = camPosition;
-                painter.vertexProcessor.CameraTarget = camTarget;
-            }
-
-
-            if (animateLight)
-            {
-                painter.rasterizer.colorPicker.lightSources[0].lightDirection =
-                    Vector3.Normalize(lightAnimator.MoveLightSource());
-            }
-
-            Stopwatch sw = Stopwatch.StartNew();
+            animation.UpdateScene(ticks);
             DrawScene();
-            sw.Stop();
-            if (sw.ElapsedMilliseconds > 300)
-                Debug.WriteLine("Elapsed = {0}", sw.ElapsedMilliseconds);
         }
 
         private void DrawScene()
@@ -346,6 +199,28 @@ namespace Graphics3D
         {
             InvalidateInterpolationMethod();
             DrawScene();
+        }
+
+        private void radioButtonCamFixed_CheckedChanged(object sender, EventArgs e)
+        {
+            painter.vertexProcessor.CameraPosition = new Vector3(
+                (float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
+            painter.vertexProcessor.CameraTarget = new Vector3(0);
+
+            animation.CameraType = Animation.CamType.Fixed;
+        }
+
+        private void radioButtonCamTracking_CheckedChanged(object sender, EventArgs e)
+        {
+            painter.vertexProcessor.CameraPosition = new Vector3(
+                (float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
+
+            animation.CameraType = Animation.CamType.Tracking;
+        }
+
+        private void radioButtonCamTpp_CheckedChanged(object sender, EventArgs e)
+        {
+            animation.CameraType = Animation.CamType.TPP;
         }
     }
 }
