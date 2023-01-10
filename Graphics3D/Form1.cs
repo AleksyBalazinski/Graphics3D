@@ -60,12 +60,6 @@ namespace Graphics3D
             shapes[2].Scale(2);
             shapes[2].Translate(-10, -7, 0);
 
-            /*shapes.Add(new Shape(faces, shapes.Count, new RGB(Color.Yellow), Vector3.UnitX));
-            shapes[3].ka = 0;
-            shapes[3].ks = 0;
-            shapes[3].kd = 0;*/
-            //shapes[3].Translate()
-
             painter.rasterizer.colorPicker.lightSources.Add(
                 new LightSource(LightSource.Type.Spotlight, new Vector3(0, 0, 1), new RGB(Color.White), 2, 0.7f, new Vector3(0, 0, 2)));
 
@@ -107,6 +101,8 @@ namespace Graphics3D
         }
 
         private bool darken = true;
+        private bool swingRight = true;
+        private float swingAngle = 0f;
         private int r = 255;
         private int g = 255;
         private int b = 255;
@@ -115,22 +111,53 @@ namespace Graphics3D
         float prevY = 0;
         DateTime animationStart;
 
-        private void TimerEventProcessor(object? sender, EventArgs e)
+        private void UpdateDayNightTransition(int step)
         {
-            ticks++;
-
-            /*if (darken)
+            if (darken)
             {
-                r++; g++; b++;
-                if (r == 255)
+                r -= step; g -= step; b -= step;
+                painter.rasterizer.colorPicker.fogColor.r -= step / 255.0f;
+                painter.rasterizer.colorPicker.fogColor.g -= step / 255.0f;
+                painter.rasterizer.colorPicker.fogColor.b -= step / 255.0f;
+
+                for (int i = 1; i < painter.rasterizer.colorPicker.lightSources.Count; i++)
+                {
+                    var lightSource = painter.rasterizer.colorPicker.lightSources[i];
+
+                    lightSource.lightColor.r -= step / 255.0f;
+                    lightSource.lightColor.g -= step / 255.0f;
+                    lightSource.lightColor.b -= step / 255.0f;
+                }
+
+                if (r == 0)
                     darken = false;
             }
             else
             {
-                r--; g--; b--;
-                if (r == 0)
+                r += step; g += step; b += step;
+                painter.rasterizer.colorPicker.fogColor.r += step / 255.0f;
+                painter.rasterizer.colorPicker.fogColor.g += step / 255.0f;
+                painter.rasterizer.colorPicker.fogColor.b += step / 255.0f;
+
+                for (int i = 1; i < painter.rasterizer.colorPicker.lightSources.Count; i++)
+                {
+                    var lightSource = painter.rasterizer.colorPicker.lightSources[i];
+
+                    lightSource.lightColor.r += step / 255.0f;
+                    lightSource.lightColor.g += step / 255.0f;
+                    lightSource.lightColor.b += step / 255.0f;
+                }
+
+                if (r == 255)
                     darken = true;
-            }*/
+            }
+        }
+
+        private void TimerEventProcessor(object? sender, EventArgs e)
+        {
+            ticks++;
+
+            UpdateDayNightTransition(step: 1);
 
             painter.rasterizer.ClearCanvas(Color.FromArgb(r, g, b));
             shapes[0].ResetPosition();
@@ -144,6 +171,23 @@ namespace Graphics3D
             shapes[0].direction.Y = y - prevY;
             shapes[0].direction.Z = 0;
 
+            float swingAngleStep = 0.05f;
+            float maxSwing = 0.3f;
+
+            if (swingRight)
+            {
+                swingAngle += swingAngleStep;
+                if (swingAngle > maxSwing)
+                    swingRight = false;
+            }
+            else
+            {
+                swingAngle -= swingAngleStep;
+                if (swingAngle < -maxSwing)
+                    swingRight = true;
+            }
+
+            shapes[0].Rotate(swingAngle);
             shapes[0].ApplyGeneralRotation(Utils.RotateOnto(shapes[0].InitialDirection, shapes[0].direction));
             shapes[0].Translate(x, y, 0f);
             prevX = x; prevY = y;

@@ -58,6 +58,7 @@
             this.trackBarScale = new System.Windows.Forms.TrackBar();
             this.panel3 = new System.Windows.Forms.Panel();
             this.buttonClear = new System.Windows.Forms.Button();
+            this.checkBoxSwinging = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.panel1.SuspendLayout();
@@ -147,6 +148,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.checkBoxSwinging);
             this.panel2.Controls.Add(this.groupBoxInterpolationMethod);
             this.panel2.Controls.Add(this.groupBoxCamMode);
             this.panel2.Controls.Add(this.label8);
@@ -450,6 +452,16 @@
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
             // 
+            // checkBoxSwinging
+            // 
+            this.checkBoxSwinging.AutoSize = true;
+            this.checkBoxSwinging.Location = new System.Drawing.Point(6, 506);
+            this.checkBoxSwinging.Name = "checkBoxSwinging";
+            this.checkBoxSwinging.Size = new System.Drawing.Size(74, 19);
+            this.checkBoxSwinging.TabIndex = 38;
+            this.checkBoxSwinging.Text = "swinging";
+            this.checkBoxSwinging.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -514,5 +526,6 @@
         private GroupBox groupBoxInterpolationMethod;
         private GroupBox groupBoxCamMode;
         private RadioButton radioButtonConst;
+        private CheckBox checkBoxSwinging;
     }
 }

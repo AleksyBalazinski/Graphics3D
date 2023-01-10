@@ -25,9 +25,20 @@
 
         public (int, int, int) ToRGB255()
         {
-            return (r > 1 ? 255 : (int)(r * 255),
-            g > 1 ? 255 : (int)(g * 255),
-            b > 1 ? 255 : (int)(b * 255));
+            int r255, g255, b255;
+            if (r > 1) r255 = 255;
+            else if (r < 0) r255 = 0;
+            else r255 = (int)(r * 255);
+
+            if (g > 1) g255 = 255;
+            else if (g < 0) g255 = 0;
+            else g255 = (int)(g * 255);
+
+            if (b > 1) b255 = 255;
+            else if (b < 0) b255 = 0;
+            else b255 = (int)(b * 255);
+
+            return (r255, g255, b255);
         }
 
         public static RGB operator *(float c, RGB color)

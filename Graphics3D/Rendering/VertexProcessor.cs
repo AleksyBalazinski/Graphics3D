@@ -39,7 +39,7 @@ namespace Graphics3D.Rendering
         }
 
         public float Zoom { get; set; }
-        public bool CullBackFaces = false;
+        public bool CullBackFaces { get; set; } = true;
 
         private Vector3 cameraPosition;
         private Vector3 cameraTarget;
@@ -82,7 +82,9 @@ namespace Graphics3D.Rendering
                 ws3List.Add(new Vector3(worldSpaceCoordinates.X, worldSpaceCoordinates.Y, worldSpaceCoordinates.Z));
             }
             var normal = Vector3.Cross(ws3List[1] - ws3List[0], ws3List[2] - ws3List[0]);
-            if (Vector3.Dot(ws3List[0] - CameraPosition, normal) == 0)
+
+            float dot = Vector3.Dot(ws3List[0] - CameraPosition, normal);
+            if (Vector3.Dot(ws3List[0] - CameraPosition, normal) == 0 || (dot > 0 && CullBackFaces))
                 return new List<VertexInfo>();
 
             List<VertexInfo> faceInfo = new();
