@@ -100,7 +100,7 @@ namespace Graphics3D.Rendering
 
                 (float screenX, float screenY) = ToScreen(normalized);
                 var worldSpaceNormal = Vector3.TransformNormal(vertex.NormalVector, modelMatrix);
-                faceInfo.Add(new VertexInfo(screenX, screenY, clipCoordinates.Z, worldSpaceNormal));
+                faceInfo.Add(new VertexInfo(screenX, screenY, clipCoordinates.Z, worldSpaceNormal, worldSpaceCoordinates));
             }
 
             return faceInfo;
@@ -117,7 +117,7 @@ namespace Graphics3D.Rendering
             (float screenX, float screenY) = ToScreen(normalized);
             var worldSpaceNormal = Vector3.TransformNormal(vertex.NormalVector, modelMatrix);
 
-            return new VertexInfo(screenX, screenY, normalized.Z, worldSpaceNormal);
+            return new VertexInfo(screenX, screenY, normalized.Z, worldSpaceNormal, worldSpaceCoordinates);
         }
 
         private (float, float) ToScreen(Vector3 point)

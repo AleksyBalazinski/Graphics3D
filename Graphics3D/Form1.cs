@@ -8,7 +8,7 @@ namespace Graphics3D
     public partial class Form1 : Form
     {
         static readonly System.Windows.Forms.Timer timer = new();
-        uint ticks = 0;
+        ulong ticks = 0;
         bool animateLight = false;
 
         readonly Painter painter;
@@ -60,14 +60,20 @@ namespace Graphics3D
             shapes[2].Scale(2);
             shapes[2].Translate(-10, -7, 0);
 
+            /*shapes.Add(new Shape(faces, shapes.Count, new RGB(Color.Yellow), Vector3.UnitX));
+            shapes[3].ka = 0;
+            shapes[3].ks = 0;
+            shapes[3].kd = 0;*/
+            //shapes[3].Translate()
+
             painter.rasterizer.colorPicker.lightSources.Add(
-                new LightSource(LightSource.Type.Point, new Vector3(0, 0, 1), new RGB(Color.White)));
+                new LightSource(LightSource.Type.Spotlight, new Vector3(0, 0, 1), new RGB(Color.White), 2, 0.7f, new Vector3(0, 0, 2)));
+
+            painter.rasterizer.colorPicker.lightSources.Add(
+                new LightSource(LightSource.Type.Point, new Vector3(0, 0, 1), new RGB(Color.Gray)));
 
             painter.rasterizer.colorPicker.lightSources.Add(
                 new LightSource(LightSource.Type.Point, new Vector3(1, 0, 0), new RGB(Color.Yellow)));
-
-            /*painter.rasterizer.colorPicker.lightSources.Add(
-                new LightSource(LightSource.Type.Spotlight, new Vector3(0, 0, -1), new RGB(Color.White), 1, 0.1f));*/
 
             DrawScene();
         }
@@ -140,7 +146,10 @@ namespace Graphics3D
 
             shapes[0].ApplyGeneralRotation(Utils.RotateOnto(shapes[0].InitialDirection, shapes[0].direction));
             shapes[0].Translate(x, y, 0f);
-            prevX = x; prevY= y;
+            prevX = x; prevY = y;
+
+            painter.rasterizer.colorPicker.lightSources[0].location = Vector3.Normalize(shapes[0].direction);
+            painter.rasterizer.colorPicker.lightSources[0].lightDirection = -Vector3.Normalize(shapes[0].direction);
 
             if (radioButtonCamFixed.Checked)
             {
@@ -172,8 +181,8 @@ namespace Graphics3D
             Stopwatch sw = Stopwatch.StartNew();
             DrawScene();
             sw.Stop();
-            if(sw.ElapsedMilliseconds > 300)
-            Debug.WriteLine("Elapsed = {0}", sw.ElapsedMilliseconds);
+            if (sw.ElapsedMilliseconds > 300)
+                Debug.WriteLine("Elapsed = {0}", sw.ElapsedMilliseconds);
         }
 
         private void DrawScene()

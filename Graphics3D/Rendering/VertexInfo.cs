@@ -8,12 +8,14 @@ namespace Graphics3D.Rendering
         public float Y;
         public float depth;
         public Vector3 normal; // normal vector in world coordinates
-        public VertexInfo(float X, float Y, float depth, Vector3 normal)
+        public Vector4 worldSpaceLocation;
+        public VertexInfo(float X, float Y, float depth, Vector3 normal, Vector4 worldSpaceLocation)
         {
             this.X = X;
             this.Y = Y;
             this.depth = depth;
             this.normal = normal;
+            this.worldSpaceLocation = worldSpaceLocation;
         }
 
         public static bool operator ==(VertexInfo vi1, VertexInfo vi2)

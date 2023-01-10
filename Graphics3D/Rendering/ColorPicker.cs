@@ -8,32 +8,34 @@ namespace Graphics3D.Rendering
         public InterpolantType interpolantType;
         public RGB ambient;
         public List<LightSource> lightSources;
+        public RGB fogColor;
 
         public ColorPicker()
         {
             interpolantType = InterpolantType.NormalVector;
-            ambient = new RGB(0.5f, 0.5f, 0.5f);
+            ambient = new RGB(0f, 0f, 0f);
             lightSources = new List<LightSource>();
+            fogColor = new RGB(1, 1, 1);
         }
 
         // color in point (x, y) for uniformly colored object
-        public (int, int, int) GetColor(int x, int y, List<VertexInfo> vertices, Shape shape, float depth)
+        public (int, int, int) GetColor(int x, int y, List<VertexInfo> vertices, Shape shape, float depth, Vector4 worldSpaceLocation)
         {
             RGB color;
             if (interpolantType == InterpolantType.Color)
             {
-                var colors = vertices.Select(v => ApplyLighting(shape, v.normal, depth)).ToList();
+                var colors = vertices.Select(v => ApplyLighting(shape, v.normal, depth, worldSpaceLocation)).ToList();
                 color = Utils.Interpolate(vertices, colors, x, y); // interpolate color
             }
             else if (interpolantType == InterpolantType.NormalVector)
             {
                 Vector3 interpolatedNormal
                     = Utils.Interpolate(vertices, vertices.Select(v => v.normal).ToList(), x, y); // interpolate normal
-                color = ApplyLighting(shape, interpolatedNormal, depth);
+                color = ApplyLighting(shape, interpolatedNormal, depth, worldSpaceLocation);
             }
             else if (interpolantType == InterpolantType.Constant)
             {
-                color = ApplyLighting(shape, vertices[0].normal, depth);
+                color = ApplyLighting(shape, vertices[0].normal, depth, worldSpaceLocation);
             }
             else
             {
@@ -43,7 +45,7 @@ namespace Graphics3D.Rendering
             return color.ToRGB255();
         }
 
-        private RGB ApplyLighting(Shape shape, Vector3 normal, float depth)
+        private RGB ApplyLighting(Shape shape, Vector3 normal, float depth, Vector4 worldSpaceLocation)
         {
             if (lightSources.Count == 0)
             {
@@ -75,23 +77,31 @@ namespace Graphics3D.Rendering
             {
                 if (lightSources[i].type == LightSource.Type.Spotlight)
                 {
-                    
+                    var spotlight = lightSources[i];
+                    Vector3 P = new(worldSpaceLocation.X, worldSpaceLocation.Y, worldSpaceLocation.Z);
+                    float cosTheta = Vector3.Dot(Vector3.Normalize(spotlight.location - P), spotlight.lightDirection);
+                    if (cosTheta > spotlight.cutoff)
+                        cs[i] = MathF.Pow(cosTheta, spotlight.e) * cs[i];
+                    else
+                        cs[i] = new RGB(0, 0, 0);
                 }
 
-                I += /*shape.ka * ambient 
-                    +*/ (shape.kd * cos1s[i] + shape.ks * MathF.Pow(cos2s[i], shape.m)) * cs[i];
+                I += shape.ka * ambient
+                    + (shape.kd * cos1s[i] + shape.ks * MathF.Pow(cos2s[i], shape.m)) * cs[i];
             }
-            return Fog(depth) * I + (1 - Fog(depth)) * new RGB(Color.White);
+            return Fog(depth) * I + (1 - Fog(depth)) * fogColor;
         }
 
         private static float Fog(float depth)
         {
-            if (depth > 30)
+            float max = 30;
+            float min = 0.1f;
+            if (depth > max)
                 return 0;
-            if (depth < 0.1)
+            if (depth < min)
                 return 1;
 
-            return (30 - depth) / (30 - 0.1f);
+            return (max - depth) / (max - min);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Graphics3D.Model;
+using System.Numerics;
 
 namespace Graphics3D.Rendering
 {
@@ -132,13 +133,14 @@ namespace Graphics3D.Rendering
             for (int x = xStart; x <= xEnd; x++)
             {
                 float z = Utils.Interpolate(vertices, vertices.Select(v => v.depth).ToList(), x, y);
+                Vector4 worldSpaceLocation = Utils.Interpolate(vertices, vertices.Select(v => v.worldSpaceLocation).ToList(), x, y);
 
                 lock (locks[x, y])
                 {
                     if (z > zBuffer[x, y] || float.IsNaN(z))
                         continue;
 
-                    var (r, g, b) = colorPicker.GetColor(x, y, vertices, shape, z);
+                    var (r, g, b) = colorPicker.GetColor(x, y, vertices, shape, z, worldSpaceLocation);
                     canvas.SetPixel(x, y, Color.FromArgb(r, g, b));
                     zBuffer[x, y] = z;
                 }
