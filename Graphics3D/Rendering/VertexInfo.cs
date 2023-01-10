@@ -7,7 +7,7 @@ namespace Graphics3D.Rendering
         public float X;
         public float Y;
         public float depth;
-        public Vector3 normal; // normal vector in wolrd coordinates
+        public Vector3 normal; // normal vector in world coordinates
         public VertexInfo(float X, float Y, float depth, Vector3 normal)
         {
             this.X = X;

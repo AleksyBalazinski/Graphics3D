@@ -6,11 +6,13 @@ namespace Graphics3D.Rendering
     internal class ColorPicker
     {
         public InterpolantType interpolantType;
+        public RGB ambient;
         public List<LightSource> lightSources;
 
         public ColorPicker()
         {
             interpolantType = InterpolantType.NormalVector;
+            ambient = new RGB(0.5f, 0.5f, 0.5f);
             lightSources = new List<LightSource>();
         }
 
@@ -45,12 +47,14 @@ namespace Graphics3D.Rendering
         {
             if (lightSources.Count == 0)
             {
-                return new RGB(0, 0, 0);
+                return shape.ka * ambient;
             }
+
             Vector3 vert = new(0, 0, 1);
             Vector3 N = Vector3.Normalize(normal);
 
-            var Rs = lightSources.Select(ls => 2 * Vector3.Dot(N, ls.lightDirection) * N - ls.lightDirection).ToList();
+            var Rs = lightSources.Select(
+                ls => 2 * Vector3.Dot(N, ls.lightDirection) * N - ls.lightDirection).ToList();
 
             var cos1s = lightSources.Select(ls =>
             {
@@ -66,9 +70,16 @@ namespace Graphics3D.Rendering
 
             var cs = lightSources.Select(ls => ls.lightColor * shape.color).ToList();
             RGB I = new();
+
             for (int i = 0; i < lightSources.Count; i++)
             {
-                I += (shape.kd * cos1s[i] + shape.ks * MathF.Pow(cos2s[i], shape.m)) * cs[i];
+                if (lightSources[i].type == LightSource.Type.Spotlight)
+                {
+                    
+                }
+
+                I += /*shape.ka * ambient 
+                    +*/ (shape.kd * cos1s[i] + shape.ks * MathF.Pow(cos2s[i], shape.m)) * cs[i];
             }
             return Fog(depth) * I + (1 - Fog(depth)) * new RGB(Color.White);
         }

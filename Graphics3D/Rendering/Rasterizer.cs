@@ -135,7 +135,7 @@ namespace Graphics3D.Rendering
 
                 lock (locks[x, y])
                 {
-                    if (z > zBuffer[x, y])
+                    if (z > zBuffer[x, y] || float.IsNaN(z))
                         continue;
 
                     var (r, g, b) = colorPicker.GetColor(x, y, vertices, shape, z);

@@ -10,6 +10,7 @@ namespace Graphics3D.Model
         public Matrix4x4 ModelMatrix { get; set; } = Matrix4x4.Identity;
         public RGB color;
 
+        public float ka = 0.5f;
         public float ks = 0.5f;
         public float kd = 0.5f;
         public float m = 1;

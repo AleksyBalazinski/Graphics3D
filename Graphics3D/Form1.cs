@@ -66,6 +66,9 @@ namespace Graphics3D
             painter.rasterizer.colorPicker.lightSources.Add(
                 new LightSource(LightSource.Type.Point, new Vector3(1, 0, 0), new RGB(Color.Yellow)));
 
+            /*painter.rasterizer.colorPicker.lightSources.Add(
+                new LightSource(LightSource.Type.Spotlight, new Vector3(0, 0, -1), new RGB(Color.White), 1, 0.1f));*/
+
             DrawScene();
         }
 
@@ -88,6 +91,7 @@ namespace Graphics3D
 
         private void buttonAnimationStart_Click(object sender, EventArgs e)
         {
+            animationStart = DateTime.UtcNow;
             timer.Start();
         }
 
@@ -100,6 +104,10 @@ namespace Graphics3D
         private int r = 255;
         private int g = 255;
         private int b = 255;
+
+        float prevX = 0;
+        float prevY = 0;
+        DateTime animationStart;
 
         private void TimerEventProcessor(object? sender, EventArgs e)
         {
@@ -126,16 +134,13 @@ namespace Graphics3D
             float x = (a * c) / (1 + MathF.Pow(s, 2));
             float y = (a * s * c) / (1 + MathF.Pow(s, 2));
 
-
-            (s, c) = MathF.SinCos((ticks + 1) / 20f);
-            float nextX = (a * c) / (1 + MathF.Pow(s, 2));
-            float nextY = (a * s * c) / (1 + MathF.Pow(s, 2));
-            shapes[0].direction.X = nextX - x;
-            shapes[0].direction.Y = nextY - y;
+            shapes[0].direction.X = x - prevX;
+            shapes[0].direction.Y = y - prevY;
             shapes[0].direction.Z = 0;
 
             shapes[0].ApplyGeneralRotation(Utils.RotateOnto(shapes[0].InitialDirection, shapes[0].direction));
             shapes[0].Translate(x, y, 0f);
+            prevX = x; prevY= y;
 
             if (radioButtonCamFixed.Checked)
             {
@@ -167,7 +172,7 @@ namespace Graphics3D
             Stopwatch sw = Stopwatch.StartNew();
             DrawScene();
             sw.Stop();
-            //if(sw.ElapsedMilliseconds > 200)
+            if(sw.ElapsedMilliseconds > 300)
             Debug.WriteLine("Elapsed = {0}", sw.ElapsedMilliseconds);
         }
 
