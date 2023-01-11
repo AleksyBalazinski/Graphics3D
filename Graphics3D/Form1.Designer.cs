@@ -31,6 +31,8 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.canvas = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.buttonPauseInteractive = new System.Windows.Forms.Button();
+            this.buttonStartInteractive = new System.Windows.Forms.Button();
             this.buttonPauseAnimation = new System.Windows.Forms.Button();
             this.buttonAnimationStart = new System.Windows.Forms.Button();
             this.buttonLoad = new System.Windows.Forms.Button();
@@ -107,6 +109,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.buttonPauseInteractive);
+            this.panel1.Controls.Add(this.buttonStartInteractive);
             this.panel1.Controls.Add(this.buttonPauseAnimation);
             this.panel1.Controls.Add(this.buttonAnimationStart);
             this.panel1.Controls.Add(this.buttonLoad);
@@ -114,6 +118,26 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(740, 74);
             this.panel1.TabIndex = 3;
+            // 
+            // buttonPauseInteractive
+            // 
+            this.buttonPauseInteractive.Location = new System.Drawing.Point(385, 26);
+            this.buttonPauseInteractive.Name = "buttonPauseInteractive";
+            this.buttonPauseInteractive.Size = new System.Drawing.Size(75, 39);
+            this.buttonPauseInteractive.TabIndex = 6;
+            this.buttonPauseInteractive.Text = "Pause interactive";
+            this.buttonPauseInteractive.UseVisualStyleBackColor = true;
+            this.buttonPauseInteractive.Click += new System.EventHandler(this.buttonPauseInteractive_Click);
+            // 
+            // buttonStartInteractive
+            // 
+            this.buttonStartInteractive.Location = new System.Drawing.Point(288, 22);
+            this.buttonStartInteractive.Name = "buttonStartInteractive";
+            this.buttonStartInteractive.Size = new System.Drawing.Size(75, 43);
+            this.buttonStartInteractive.TabIndex = 5;
+            this.buttonStartInteractive.Text = "Start interactive";
+            this.buttonStartInteractive.UseVisualStyleBackColor = true;
+            this.buttonStartInteractive.Click += new System.EventHandler(this.buttonStartInteractive_Click);
             // 
             // buttonPauseAnimation
             // 
@@ -475,6 +499,8 @@
             this.KeyPreview = true;
             this.Name = "Form1";
             this.Text = "Filler";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).EndInit();
@@ -530,5 +556,7 @@
         private GroupBox groupBoxCamMode;
         private RadioButton radioButtonConst;
         private CheckBox checkBoxSwinging;
+        private Button buttonPauseInteractive;
+        private Button buttonStartInteractive;
     }
 }

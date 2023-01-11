@@ -26,8 +26,14 @@ namespace Graphics3D
         private int g = 255;
         private int b = 255;
 
-        float prevX = 0;
-        float prevY = 0;
+        private float prevX = 0;
+        private float prevY = 0;
+
+        public float x = 0;
+        public float y = 0;
+
+        public float verticalLightAngle = 0;
+        public float horizontalLightAngle = 0;
 
         public CamType CameraType { get; set; }
 
@@ -74,31 +80,87 @@ namespace Graphics3D
                 new LightSource(LightSource.Type.Point, new Vector3(1, 0, 0), new RGB(Color.Yellow)));
         }
 
+        public void HandleInput(KeyboardState keyboard)
+        {
+            float step = 0.05f;
+
+            if (keyboard == KeyboardState.None)
+                return;
+
+            if ((keyboard & KeyboardState.pressedW) != 0)
+            {
+                y += step;
+            }
+            if ((keyboard & KeyboardState.pressedS) != 0)
+            {
+                y -= step;
+            }
+            if ((keyboard & KeyboardState.pressedA) != 0)
+            {
+                x -= step;
+            }
+            if ((keyboard & KeyboardState.pressedD) != 0)
+            {
+                x += step;
+            }
+        }
+
         public void UpdateScene(ulong ticks)
+        {
+            Thread.Sleep(1);
+            float a = 5;
+            var (s, c) = MathF.SinCos(ticks / 200f);
+            x = (a * c) / (1 + MathF.Pow(s, 2));
+            y = (a * s * c) / (1 + MathF.Pow(s, 2));
+
+            UpdateScene();
+        }
+
+        public void UpdateScene()
         {
             UpdateDayNightTransition(step: 1);
 
             painter.rasterizer.ClearCanvas(Color.FromArgb(r, g, b));
-            shapes[0].ResetPosition();
 
-            float a = 5;
-            var (s, c) = MathF.SinCos(ticks / 20f);
-            float x = (a * c) / (1 + MathF.Pow(s, 2));
-            float y = (a * s * c) / (1 + MathF.Pow(s, 2));
+            if (x != prevX || y != prevY)
+            {
+                shapes[0].ResetPosition();
 
-            shapes[0].direction.X = x - prevX;
-            shapes[0].direction.Y = y - prevY;
-            shapes[0].direction.Z = 0;
+                shapes[0].direction.X = x - prevX;
+                shapes[0].direction.Y = y - prevY;
+                shapes[0].direction.Z = 0;
 
-            UpdateSwing(swingAngleStep: 0.05f, maxSwing: 0.3f);
+                UpdateSwing(swingAngleStep: 0.05f, maxSwing: 0.3f);
 
-            shapes[0].Rotate(swingAngle);
-            shapes[0].ApplyGeneralRotation(MathUtils.RotateOnto(shapes[0].InitialDirection, shapes[0].direction));
-            shapes[0].Translate(x, y, 0f);
-            prevX = x; prevY = y;
+                shapes[0].Rotate(swingAngle);
+                shapes[0].ApplyGeneralRotation(MathUtils.RotateOnto(shapes[0].InitialDirection, shapes[0].direction));
+                shapes[0].Translate(x, y, 0f);
+                prevX = x; prevY = y;
 
-            painter.rasterizer.colorPicker.lightSources[0].location = Vector3.Normalize(shapes[0].direction);
-            painter.rasterizer.colorPicker.lightSources[0].lightDirection = -Vector3.Normalize(shapes[0].direction);
+                painter.rasterizer.colorPicker.lightSources[0].location = Vector3.Normalize(shapes[0].direction);
+                if (horizontalLightAngle == 0 && verticalLightAngle == 0)
+                {
+                    painter.rasterizer.colorPicker.lightSources[0].lightDirection = -Vector3.Normalize(shapes[0].direction);
+                }
+                else
+                {
+                    var horizontalRotation = Matrix4x4.CreateRotationZ(horizontalLightAngle);
+                    var verticalRotationAxis = Vector3.Normalize(Vector3.Cross(shapes[0].direction, Vector3.UnitZ));
+                    var verticalRotation = Quaternion.CreateFromAxisAngle(verticalRotationAxis, verticalLightAngle);
+
+                    Vector3 u = new Vector3(verticalRotation.X, verticalRotation.Y, verticalRotation.Z);
+                    float s = verticalRotation.W;
+                    var lightDirection = 2 * Vector3.Dot(u, shapes[0].direction) * u
+                        + (s * s - Vector3.Dot(u, u)) * shapes[0].direction
+                        + 2 * s * Vector3.Cross(u, shapes[0].direction);
+
+                    lightDirection = Vector3.Transform(lightDirection, horizontalRotation);
+                    lightDirection = -Vector3.Normalize(lightDirection);
+
+                    painter.rasterizer.colorPicker.lightSources[0].lightDirection = lightDirection;
+                }
+
+            }
 
             if (CameraType == CamType.Tracking)
             {

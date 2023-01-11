@@ -38,6 +38,9 @@ namespace Graphics3D.Utility
 
         public static Matrix4x4 RotateOnto(Vector3 a, Vector3 b)
         {
+            if (Vector3.Dot(a, b) == 1)
+                return Matrix4x4.Identity;
+
             Vector3 axis = Vector3.Normalize(Vector3.Cross(a, b));
             float angle = MathF.Acos(Vector3.Dot(a, b) / (a.Length() * b.Length()));
 

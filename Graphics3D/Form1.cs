@@ -10,6 +10,7 @@ namespace Graphics3D
         static readonly System.Windows.Forms.Timer timer = new();
         ulong ticks = 0;
         bool animateLight = false;
+        bool animationRunning = false;
 
         readonly Painter painter;
         readonly DirectBitmap canvasBitmap;
@@ -19,6 +20,8 @@ namespace Graphics3D
         const float initialRadius = 30;
 
         readonly Animation animation;
+
+        private KeyboardState pressedKeys;
 
         public Form1()
         {
@@ -66,11 +69,13 @@ namespace Graphics3D
 
         private void buttonAnimationStart_Click(object sender, EventArgs e)
         {
+            animationRunning = true;
             timer.Start();
         }
 
         private void buttonPauseAnimation_Click(object sender, EventArgs e)
         {
+            animationRunning = false;
             timer.Stop();
         }
 
@@ -78,7 +83,15 @@ namespace Graphics3D
         {
             ticks++;
 
-            animation.UpdateScene(ticks);
+            if (animationRunning)
+            {
+                animation.UpdateScene(ticks);
+            }
+            else // interactive
+            {
+                animation.UpdateScene();
+            }
+
             DrawScene();
         }
 
@@ -221,6 +234,86 @@ namespace Graphics3D
         private void radioButtonCamTpp_CheckedChanged(object sender, EventArgs e)
         {
             animation.CameraType = Animation.CamType.TPP;
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.I)
+            {
+                animation.verticalLightAngle += 0.1f;
+            }
+            if (e.KeyCode == Keys.K)
+            {
+                animation.verticalLightAngle -= 0.1f;
+            }
+            if (e.KeyCode == Keys.J)
+            {
+                animation.horizontalLightAngle += 0.1f;
+            }
+            if (e.KeyCode == Keys.L)
+            {
+                animation.horizontalLightAngle -= 0.1f;
+            }
+
+            if (animationRunning)
+                return;
+
+            if (e.KeyCode == Keys.W)
+            {
+                animation.y += 0.1f;
+                pressedKeys |= KeyboardState.pressedW;
+            }
+            if (e.KeyCode == Keys.S)
+            {
+                animation.y -= 0.1f;
+                pressedKeys |= KeyboardState.pressedS;
+            }
+            if (e.KeyCode == Keys.A)
+            {
+                animation.x -= 0.1f;
+                pressedKeys |= KeyboardState.pressedA;
+            }
+            if (e.KeyCode == Keys.D)
+            {
+                animation.x += 0.1f;
+                pressedKeys |= KeyboardState.pressedD;
+            }
+            
+
+            //animation.HandleInput(pressedKeys);
+        }
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (animationRunning)
+                return;
+
+            if (e.KeyCode == Keys.W)
+            {
+                pressedKeys &= ~KeyboardState.pressedW;
+            }
+            if (e.KeyCode == Keys.S)
+            {
+                pressedKeys &= ~KeyboardState.pressedS;
+            }
+            if (e.KeyCode == Keys.A)
+            {
+                pressedKeys &= ~KeyboardState.pressedA;
+            }
+            if (e.KeyCode == Keys.D)
+            {
+                pressedKeys &= ~KeyboardState.pressedD;
+            }
+        }
+
+        private void buttonStartInteractive_Click(object sender, EventArgs e)
+        {
+            timer.Start();
+        }
+
+        private void buttonPauseInteractive_Click(object sender, EventArgs e)
+        {
+            timer.Stop();
         }
     }
 }
