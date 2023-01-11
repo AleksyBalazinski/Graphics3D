@@ -124,7 +124,7 @@ namespace Graphics3D
         private void trackBarScale_Scroll(object sender, EventArgs e)
         {
             painter.vertexProcessor.Zoom = trackBarScale.Value * 5;
-            painter.rasterizer.ClearCanvas(Color.White);
+            painter.rasterizer.ClearCanvas(painter.rasterizer.colorPicker.fogColor);
 
             DrawScene();
         }
@@ -132,7 +132,7 @@ namespace Graphics3D
         private void trackBarFov_Scroll(object sender, EventArgs e)
         {
             painter.vertexProcessor.FieldOfView = trackBarFov.Value / 100f;
-            painter.rasterizer.ClearCanvas(Color.White);
+            painter.rasterizer.ClearCanvas(painter.rasterizer.colorPicker.fogColor);
 
             DrawScene();
         }
@@ -155,7 +155,7 @@ namespace Graphics3D
         private void InvalidateCameraPosition()
         {
             painter.vertexProcessor.CameraPosition = new Vector3((float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
-            painter.rasterizer.ClearCanvas(Color.White);
+            painter.rasterizer.ClearCanvas(painter.rasterizer.colorPicker.fogColor);
             DrawScene();
         }
 
@@ -238,49 +238,50 @@ namespace Graphics3D
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.I)
+            if(animationRunning)
             {
-                animation.verticalLightAngle += 0.1f;
+                if (e.KeyCode == Keys.I)
+                {
+                    animation.verticalLightAngle += 0.1f;
+                }
+                if (e.KeyCode == Keys.K)
+                {
+                    animation.verticalLightAngle -= 0.1f;
+                }
+                if (e.KeyCode == Keys.J)
+                {
+                    animation.horizontalLightAngle += 0.1f;
+                }
+                if (e.KeyCode == Keys.L)
+                {
+                    animation.horizontalLightAngle -= 0.1f;
+                }
             }
-            if (e.KeyCode == Keys.K)
+            else
             {
-                animation.verticalLightAngle -= 0.1f;
-            }
-            if (e.KeyCode == Keys.J)
-            {
-                animation.horizontalLightAngle += 0.1f;
-            }
-            if (e.KeyCode == Keys.L)
-            {
-                animation.horizontalLightAngle -= 0.1f;
-            }
+                if (e.KeyCode == Keys.W)
+                {
+                    animation.y += 0.1f;
+                    pressedKeys |= KeyboardState.pressedW;
+                }
+                if (e.KeyCode == Keys.S)
+                {
+                    animation.y -= 0.1f;
+                    pressedKeys |= KeyboardState.pressedS;
+                }
+                if (e.KeyCode == Keys.A)
+                {
+                    animation.x -= 0.1f;
+                    pressedKeys |= KeyboardState.pressedA;
+                }
+                if (e.KeyCode == Keys.D)
+                {
+                    animation.x += 0.1f;
+                    pressedKeys |= KeyboardState.pressedD;
+                }
 
-            if (animationRunning)
-                return;
-
-            if (e.KeyCode == Keys.W)
-            {
-                animation.y += 0.1f;
-                pressedKeys |= KeyboardState.pressedW;
+                //animation.HandleInput(pressedKeys);
             }
-            if (e.KeyCode == Keys.S)
-            {
-                animation.y -= 0.1f;
-                pressedKeys |= KeyboardState.pressedS;
-            }
-            if (e.KeyCode == Keys.A)
-            {
-                animation.x -= 0.1f;
-                pressedKeys |= KeyboardState.pressedA;
-            }
-            if (e.KeyCode == Keys.D)
-            {
-                animation.x += 0.1f;
-                pressedKeys |= KeyboardState.pressedD;
-            }
-            
-
-            //animation.HandleInput(pressedKeys);
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)

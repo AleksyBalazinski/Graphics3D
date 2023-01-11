@@ -109,7 +109,7 @@ namespace Graphics3D
         {
             Thread.Sleep(1);
             float a = 5;
-            var (s, c) = MathF.SinCos(ticks / 200f);
+            var (s, c) = MathF.SinCos(ticks / 20f);
             x = (a * c) / (1 + MathF.Pow(s, 2));
             y = (a * s * c) / (1 + MathF.Pow(s, 2));
 
@@ -130,14 +130,14 @@ namespace Graphics3D
                 shapes[0].direction.Y = y - prevY;
                 shapes[0].direction.Z = 0;
 
-                UpdateSwing(swingAngleStep: 0.05f, maxSwing: 0.3f);
+                UpdateSwing(swingAngleStep: 0.05f, maxSwing: 0.2f);
 
                 shapes[0].Rotate(swingAngle);
                 shapes[0].ApplyGeneralRotation(MathUtils.RotateOnto(shapes[0].InitialDirection, shapes[0].direction));
                 shapes[0].Translate(x, y, 0f);
                 prevX = x; prevY = y;
 
-                painter.rasterizer.colorPicker.lightSources[0].location = Vector3.Normalize(shapes[0].direction);
+                painter.rasterizer.colorPicker.lightSources[0].location = shapes[0].Position + Vector3.Normalize(shapes[0].direction);
                 if (horizontalLightAngle == 0 && verticalLightAngle == 0)
                 {
                     painter.rasterizer.colorPicker.lightSources[0].lightDirection = -Vector3.Normalize(shapes[0].direction);
