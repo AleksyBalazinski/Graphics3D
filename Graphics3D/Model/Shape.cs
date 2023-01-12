@@ -49,7 +49,7 @@ namespace Graphics3D.Model
             painter.Paint(this);
         }
 
-        public void Rotate(float radians)
+        public void RotateX(float radians)
         {
             ModelMatrix *= Matrix4x4.CreateRotationX(radians);
         }

@@ -87,7 +87,7 @@ namespace Graphics3D
         {
             ticks++;
             framesCount++;
-            if(framesCount == 50)
+            if (framesCount == 50)
             {
                 framesCount = 1;
                 fpsCountStart = DateTime.UtcNow;
@@ -99,7 +99,7 @@ namespace Graphics3D
             }
             else // interactive
             {
-                animation.UpdateScene(checkBoxSwinging.Checked);
+                animation.UpdateSceneInteractive(checkBoxSwinging.Checked);
             }
 
             DrawScene();
@@ -250,57 +250,67 @@ namespace Graphics3D
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if(animationRunning)
+
+            if (e.KeyCode == Keys.I)
             {
-                if (e.KeyCode == Keys.I)
-                {
-                    animation.verticalLightAngle += 0.1f;
-                }
-                if (e.KeyCode == Keys.K)
-                {
-                    animation.verticalLightAngle -= 0.1f;
-                }
-                if (e.KeyCode == Keys.J)
-                {
-                    animation.horizontalLightAngle += 0.1f;
-                }
-                if (e.KeyCode == Keys.L)
-                {
-                    animation.horizontalLightAngle -= 0.1f;
-                }
+                pressedKeys |= KeyboardState.pressedI;
             }
-            else
+            if (e.KeyCode == Keys.K)
+            {
+                pressedKeys |= KeyboardState.pressedK;
+            }
+            if (e.KeyCode == Keys.J)
+            {
+                pressedKeys |= KeyboardState.pressedJ;
+            }
+            if (e.KeyCode == Keys.L)
+            {
+                pressedKeys |= KeyboardState.pressedL;
+            }
+            if (!animationRunning)
             {
                 if (e.KeyCode == Keys.W)
                 {
-                    animation.y += 0.1f;
                     pressedKeys |= KeyboardState.pressedW;
                 }
                 if (e.KeyCode == Keys.S)
                 {
-                    animation.y -= 0.1f;
                     pressedKeys |= KeyboardState.pressedS;
                 }
                 if (e.KeyCode == Keys.A)
                 {
-                    animation.x -= 0.1f;
                     pressedKeys |= KeyboardState.pressedA;
                 }
                 if (e.KeyCode == Keys.D)
                 {
-                    animation.x += 0.1f;
                     pressedKeys |= KeyboardState.pressedD;
                 }
-
-                //animation.HandleInput(pressedKeys);
             }
+
+            animation.HandleInput(pressedKeys);
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.I)
+            {
+                pressedKeys &= ~KeyboardState.pressedI;
+            }
+            if (e.KeyCode == Keys.K)
+            {
+                pressedKeys &= ~KeyboardState.pressedK;
+            }
+            if (e.KeyCode == Keys.J)
+            {
+                pressedKeys &= ~KeyboardState.pressedJ;
+            }
+            if (e.KeyCode == Keys.L)
+            {
+                pressedKeys &= ~KeyboardState.pressedL;
+            }
+
             if (animationRunning)
                 return;
-
             if (e.KeyCode == Keys.W)
             {
                 pressedKeys &= ~KeyboardState.pressedW;
@@ -322,6 +332,7 @@ namespace Graphics3D
         private void buttonStartInteractive_Click(object sender, EventArgs e)
         {
             timer.Start();
+            animationRunning = false;
         }
 
         private void buttonPauseInteractive_Click(object sender, EventArgs e)
