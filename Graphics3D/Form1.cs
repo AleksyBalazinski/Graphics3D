@@ -22,6 +22,9 @@ namespace Graphics3D
         readonly Animation animation;
 
         private KeyboardState pressedKeys;
+        private ulong framesCount = 0;
+
+        DateTime fpsCountStart;
 
         public Form1()
         {
@@ -71,6 +74,7 @@ namespace Graphics3D
         {
             animationRunning = true;
             timer.Start();
+            fpsCountStart = DateTime.UtcNow;
         }
 
         private void buttonPauseAnimation_Click(object sender, EventArgs e)
@@ -82,17 +86,25 @@ namespace Graphics3D
         private void TimerEventProcessor(object? sender, EventArgs e)
         {
             ticks++;
+            framesCount++;
+            if(framesCount == 50)
+            {
+                framesCount = 1;
+                fpsCountStart = DateTime.UtcNow;
+            }
 
             if (animationRunning)
             {
-                animation.UpdateScene(ticks);
+                animation.UpdateScene(ticks, checkBoxSwinging.Checked);
             }
             else // interactive
             {
-                animation.UpdateScene();
+                animation.UpdateScene(checkBoxSwinging.Checked);
             }
 
             DrawScene();
+
+            textBoxFps.Text = string.Format("{0:0.0}", (framesCount / (DateTime.UtcNow - fpsCountStart).TotalSeconds));
         }
 
         private void DrawScene()

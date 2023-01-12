@@ -31,6 +31,8 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.canvas = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBoxFps = new System.Windows.Forms.TextBox();
             this.buttonPauseInteractive = new System.Windows.Forms.Button();
             this.buttonStartInteractive = new System.Windows.Forms.Button();
             this.buttonPauseAnimation = new System.Windows.Forms.Button();
@@ -109,6 +111,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.textBoxFps);
             this.panel1.Controls.Add(this.buttonPauseInteractive);
             this.panel1.Controls.Add(this.buttonStartInteractive);
             this.panel1.Controls.Add(this.buttonPauseAnimation);
@@ -118,6 +122,23 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(740, 74);
             this.panel1.TabIndex = 3;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(487, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(26, 15);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "FPS";
+            // 
+            // textBoxFps
+            // 
+            this.textBoxFps.Location = new System.Drawing.Point(485, 42);
+            this.textBoxFps.Name = "textBoxFps";
+            this.textBoxFps.ReadOnly = true;
+            this.textBoxFps.Size = new System.Drawing.Size(100, 23);
+            this.textBoxFps.TabIndex = 7;
             // 
             // buttonPauseInteractive
             // 
@@ -196,7 +217,7 @@
             // checkBoxSwinging
             // 
             this.checkBoxSwinging.AutoSize = true;
-            this.checkBoxSwinging.Location = new System.Drawing.Point(6, 506);
+            this.checkBoxSwinging.Location = new System.Drawing.Point(0, 503);
             this.checkBoxSwinging.Name = "checkBoxSwinging";
             this.checkBoxSwinging.Size = new System.Drawing.Size(74, 19);
             this.checkBoxSwinging.TabIndex = 38;
@@ -222,7 +243,6 @@
             this.radioButtonConst.Name = "radioButtonConst";
             this.radioButtonConst.Size = new System.Drawing.Size(71, 19);
             this.radioButtonConst.TabIndex = 33;
-            this.radioButtonConst.TabStop = true;
             this.radioButtonConst.Text = "constant";
             this.radioButtonConst.UseVisualStyleBackColor = true;
             this.radioButtonConst.CheckedChanged += new System.EventHandler(this.radioButtonConst_CheckedChanged);
@@ -230,12 +250,10 @@
             // radioButtonColors
             // 
             this.radioButtonColors.AutoSize = true;
-            this.radioButtonColors.Checked = true;
-            this.radioButtonColors.Location = new System.Drawing.Point(6, 32);
+            this.radioButtonColors.Location = new System.Drawing.Point(4, 51);
             this.radioButtonColors.Name = "radioButtonColors";
             this.radioButtonColors.Size = new System.Drawing.Size(57, 19);
             this.radioButtonColors.TabIndex = 32;
-            this.radioButtonColors.TabStop = true;
             this.radioButtonColors.Text = "colors";
             this.radioButtonColors.UseVisualStyleBackColor = true;
             this.radioButtonColors.CheckedChanged += new System.EventHandler(this.radioButtonColors_CheckedChanged);
@@ -243,10 +261,12 @@
             // radioButtonNormals
             // 
             this.radioButtonNormals.AutoSize = true;
-            this.radioButtonNormals.Location = new System.Drawing.Point(6, 54);
+            this.radioButtonNormals.Checked = true;
+            this.radioButtonNormals.Location = new System.Drawing.Point(4, 26);
             this.radioButtonNormals.Name = "radioButtonNormals";
             this.radioButtonNormals.Size = new System.Drawing.Size(68, 19);
             this.radioButtonNormals.TabIndex = 31;
+            this.radioButtonNormals.TabStop = true;
             this.radioButtonNormals.Text = "normals";
             this.radioButtonNormals.UseVisualStyleBackColor = true;
             this.radioButtonNormals.CheckedChanged += new System.EventHandler(this.radioButtonNormals_CheckedChanged);
@@ -309,7 +329,7 @@
             // 
             // trackBarLightZ
             // 
-            this.trackBarLightZ.Location = new System.Drawing.Point(19, 434);
+            this.trackBarLightZ.Location = new System.Drawing.Point(15, 434);
             this.trackBarLightZ.Maximum = 50;
             this.trackBarLightZ.Minimum = 1;
             this.trackBarLightZ.Name = "trackBarLightZ";
@@ -505,6 +525,7 @@
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).EndInit();
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.groupBoxInterpolationMethod.ResumeLayout(false);
@@ -558,5 +579,7 @@
         private CheckBox checkBoxSwinging;
         private Button buttonPauseInteractive;
         private Button buttonStartInteractive;
+        private Label label1;
+        private TextBox textBoxFps;
     }
 }

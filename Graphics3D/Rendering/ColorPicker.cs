@@ -14,7 +14,7 @@ namespace Graphics3D.Rendering
         public ColorPicker()
         {
             interpolantType = InterpolantType.NormalVector;
-            ambient = new RGB(0f, 0f, 0f);
+            ambient = new RGB(0.05f, 0.05f, 0.05f);
             lightSources = new List<LightSource>();
             fogColor = new RGB(1, 1, 1);
         }
@@ -25,7 +25,7 @@ namespace Graphics3D.Rendering
             RGB color;
             if (interpolantType == InterpolantType.Color)
             {
-                var colors = vertices.Select(v => ApplyLighting(shape, v.normal, depth, worldSpaceLocation)).ToList();
+                var colors = vertices.Select(v => ApplyLighting(shape, v.normal, v.depth, v.worldSpaceLocation)).ToList();
                 color = MathUtils.Interpolate(vertices, colors, x, y); // interpolate color
             }
             else if (interpolantType == InterpolantType.NormalVector)

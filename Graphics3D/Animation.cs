@@ -105,7 +105,7 @@ namespace Graphics3D
             }
         }
 
-        public void UpdateScene(ulong ticks)
+        public void UpdateScene(ulong ticks, bool swinging)
         {
             Thread.Sleep(1);
             float a = 5;
@@ -113,10 +113,10 @@ namespace Graphics3D
             x = (a * c) / (1 + MathF.Pow(s, 2));
             y = (a * s * c) / (1 + MathF.Pow(s, 2));
 
-            UpdateScene();
+            UpdateScene(swinging);
         }
 
-        public void UpdateScene()
+        public void UpdateScene(bool swinging)
         {
             UpdateDayNightTransition(step: 1);
 
@@ -132,7 +132,8 @@ namespace Graphics3D
 
                 UpdateSwing(swingAngleStep: 0.05f, maxSwing: 0.2f);
 
-                shapes[0].Rotate(swingAngle);
+                if(swinging)
+                    shapes[0].Rotate(swingAngle);
                 shapes[0].ApplyGeneralRotation(MathUtils.RotateOnto(shapes[0].InitialDirection, shapes[0].direction));
                 shapes[0].Translate(x, y, 0f);
                 prevX = x; prevY = y;
