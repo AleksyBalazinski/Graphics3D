@@ -70,12 +70,6 @@ namespace Graphics3D.Rendering
             }
         }
 
-        public void FillFaceSave(List<VertexInfo> screenPoints, Shape shape)
-        {
-            var screenPointsCopy = new List<VertexInfo>(screenPoints);
-            FillFace(screenPointsCopy, shape);
-        }
-
         public void FillFace(List<VertexInfo> screenPoints, Shape shape)
         {
             if (screenPoints.Count == 0)

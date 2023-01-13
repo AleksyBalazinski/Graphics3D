@@ -8,14 +8,15 @@ namespace Graphics3D
     /// <summary>
     /// Animation containing:
     /// * one moving car and two stationary objects (sphere and cube);
-    /// * two stationary light sources and one spotlight moving along with the car (headlights);
+    /// * two stationary light sources
+    ///     1. yellow coming from positive x direction,
+    ///     2. white coming from posisitve z direction,
+    /// and one white spotlight moving along with the car (headlights);
     /// * transitions between day and night.
     /// Rendering is done on the client's side.
     /// </summary>
     internal class Animation
     {
-        bool animateLight = false;
-
         private readonly Painter painter;
 
         private readonly Shape car;
@@ -51,13 +52,9 @@ namespace Graphics3D
             Fixed, Tracking, TPP
         }
 
-        readonly LightAnimator lightAnimator;
-        const float initialRadius = 30;
-
-        public Animation(Painter painter, LightAnimator lightAnimator)
+        public Animation(Painter painter)
         {
             this.painter = painter;
-            this.lightAnimator = lightAnimator;
 
             string carObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\car.obj"));
             List<Face> faces = ObjFileReader.Read(carObj);
@@ -174,12 +171,6 @@ namespace Graphics3D
             }
 
             UpdateCamera();
-
-            if (animateLight)
-            {
-                painter.Rasterizer.ColorPicker.LightSources[0].LightDirection =
-                    Vector3.Normalize(lightAnimator.MoveLightSource());
-            }
         }
 
         public void UpdateSceneInteractive(bool swinging)
@@ -217,12 +208,6 @@ namespace Graphics3D
 
 
             UpdateCamera();
-
-            if (animateLight)
-            {
-                painter.Rasterizer.ColorPicker.LightSources[0].LightDirection =
-                    Vector3.Normalize(lightAnimator.MoveLightSource());
-            }
         }
 
         private void UpdateLighting()

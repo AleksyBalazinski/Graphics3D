@@ -8,12 +8,27 @@ namespace Graphics3D.Model
     {
         public List<Face> Faces { get; set; }
         public Matrix4x4 ModelMatrix { get; set; } = Matrix4x4.Identity;
-        public RGB color;
+        public RGB Color { get; set; }
 
-        public float ka = 0.5f;
-        public float ks = 0.5f;
-        public float kd = 0.5f;
-        public float m = 1;
+        /// <summary>
+        /// ambient reflection constant
+        /// </summary>
+        public float Ka { get; set; } = 0.5f;
+
+        /// <summary>
+        /// specular reflection constant
+        /// </summary>
+        public float Ks { get; set; } = 0.5f;
+
+        /// <summary>
+        /// diffuse reflection constant
+        /// </summary>
+        public float Kd { get; set; } = 0.5f;
+
+        /// <summary>
+        /// shininess constant
+        /// </summary>
+        public float M { get; set; } = 1;
 
         Vector3 position;
 
@@ -33,7 +48,7 @@ namespace Graphics3D.Model
         public Shape(List<Face> faces, RGB color, Vector3 initialDirection)
         {
             Faces = faces;
-            this.color = color;
+            Color = color;
             this.initialDirection = initialDirection;
         }
 

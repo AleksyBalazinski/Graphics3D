@@ -2,6 +2,9 @@
 
 namespace Graphics3D.Rendering
 {
+    /// <summary>
+    /// Internal structure used for passing information between rendering stages
+    /// </summary>
     internal struct VertexInfo
     {
         public float X;

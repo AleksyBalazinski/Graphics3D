@@ -9,15 +9,12 @@ namespace Graphics3D
     {
         static readonly System.Windows.Forms.Timer timer = new();
         ulong ticks = 0;
-        bool animateLight = false;
         bool animationRunning = false;
 
         readonly Painter painter;
         readonly DirectBitmap canvasBitmap;
         readonly List<Shape> shapes;
         readonly Random random = new();
-        readonly LightAnimator lightAnimator;
-        const float initialRadius = 30;
 
         readonly Animation animation;
 
@@ -44,9 +41,7 @@ namespace Graphics3D
             painter.VertexProcessor.Zoom = 100;
             painter.VertexProcessor.CameraPosition = new Vector3((float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
 
-            lightAnimator = new LightAnimator(new Vector3(initialRadius, 0, 20), 5);
-
-            animation = new Animation(painter, lightAnimator);
+            animation = new Animation(painter);
             shapes.AddRange(animation.Shapes);
 
             painter.DrawCoordinateSystem();
@@ -88,12 +83,6 @@ namespace Graphics3D
         {
             ticks++;
             framesCount++;
-            if (framesCount == 10)
-            {
-                textBoxFps.Text = string.Format("{0:0.0}", (framesCount / (DateTime.UtcNow - fpsCountStart).TotalSeconds));
-                framesCount = 1;
-                fpsCountStart = DateTime.UtcNow;
-            }
 
             if (animationRunning)
             {
@@ -105,12 +94,20 @@ namespace Graphics3D
             }
 
             DrawScene();
+
+            if (framesCount == 10)
+            {
+                textBoxFps.Text = string.Format("{0:0.0}", (framesCount / (DateTime.UtcNow - fpsCountStart).TotalSeconds));
+                framesCount = 0;
+                fpsCountStart = DateTime.UtcNow;
+            }
         }
 
         private void DrawScene()
         {
             painter.Rasterizer.ClearDepthBuffer();
-            painter.DrawCoordinateSystem();
+            if(checkBoxCoordSystem.Checked)
+                painter.DrawCoordinateSystem();
 
             foreach (var shape in shapes)
             {
@@ -196,27 +193,6 @@ namespace Graphics3D
         private void radioButtonColors_CheckedChanged(object sender, EventArgs e)
         {
             InvalidateInterpolationMethod();
-            DrawScene();
-        }
-
-        private void checkBoxAnimateLight_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkBoxAnimateLight.Checked)
-            {
-                animateLight = true;
-            }
-            else
-            {
-                animateLight = false;
-            }
-        }
-
-        private void trackBarLightZ_Scroll(object sender, EventArgs e)
-        {
-            lightAnimator.Z = trackBarLightZ.Value;
-            painter.Rasterizer.ColorPicker.LightSources[0].LightDirection
-                = Vector3.Normalize(lightAnimator.MoveLightSource());
-
             DrawScene();
         }
 

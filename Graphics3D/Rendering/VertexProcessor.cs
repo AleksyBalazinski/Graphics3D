@@ -39,6 +39,10 @@ namespace Graphics3D.Rendering
         }
 
         public float Zoom { get; set; }
+
+        /// <summary>
+        /// Enables / disables back-face culling; enabled by default
+        /// </summary>
         public bool CullBackFaces { get; set; } = true;
 
         private Vector3 cameraPosition;

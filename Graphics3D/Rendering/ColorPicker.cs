@@ -19,19 +19,29 @@ namespace Graphics3D.Rendering
             FogColor = new RGB(1, 1, 1);
         }
 
-        // color in point (x, y) for uniformly colored object
+        /// <summary>
+        /// Calculates color of a pixel (x, y) for uniformly colored object
+        /// </summary>
+        /// <param name="x">First coordinate of the pixel</param>
+        /// <param name="y">Second coordinate of the pixel</param>
+        /// <param name="vertices">Vertices of the face this pixel belongs to</param>
+        /// <param name="shape">Shape this pixel belongs to</param>
+        /// <param name="depth">Depth of the pixel from viewer's perspective</param>
+        /// <param name="worldSpaceLocation">Coordinates of a point that maps to this pixel</param>
+        /// <returns>Color of this pixel as an RGB triple with each color in range 0..255</returns>
+        /// <exception cref="NotSupportedException">Thrown when ColorPicker is set to use an unknown interpolation method</exception>
         public (int, int, int) GetColor(int x, int y, List<VertexInfo> vertices, Shape shape, float depth, Vector4 worldSpaceLocation)
         {
             RGB color;
             if (Interpolant == InterpolantType.Color)
             {
                 var colors = vertices.Select(v => ApplyLighting(shape, v.normal, v.depth, v.worldSpaceLocation)).ToList();
-                color = MathUtils.Interpolate(vertices, colors, x, y); // interpolate color
+                color = MathUtils.Interpolate(vertices, colors, x, y);
             }
             else if (Interpolant == InterpolantType.NormalVector)
             {
                 Vector3 interpolatedNormal
-                    = MathUtils.Interpolate(vertices, vertices.Select(v => v.normal).ToList(), x, y); // interpolate normal
+                    = MathUtils.Interpolate(vertices, vertices.Select(v => v.normal).ToList(), x, y);
                 color = ApplyLighting(shape, interpolatedNormal, depth, worldSpaceLocation);
             }
             else if (Interpolant == InterpolantType.Constant)
@@ -50,7 +60,7 @@ namespace Graphics3D.Rendering
         {
             if (LightSources.Count == 0)
             {
-                return shape.ka * Ambient;
+                return shape.Ka * Ambient;
             }
 
             Vector3 vert = new(0, 0, 1);
@@ -71,7 +81,7 @@ namespace Graphics3D.Rendering
                 return cos2 < 0 ? 0 : cos2;
             }).ToList();
 
-            var cs = LightSources.Select(ls => ls.LightColor * shape.color).ToList();
+            var cs = LightSources.Select(ls => ls.LightColor * shape.Color).ToList();
             RGB I = new();
 
             for (int i = 0; i < LightSources.Count; i++)
@@ -87,9 +97,10 @@ namespace Graphics3D.Rendering
                         cs[i] = new RGB(0, 0, 0);
                 }
 
-                I += shape.ka * Ambient
-                    + (shape.kd * cos1s[i] + shape.ks * MathF.Pow(cos2s[i], shape.m)) * cs[i];
+                I += shape.Ka * Ambient
+                    + (shape.Kd * cos1s[i] + shape.Ks * MathF.Pow(cos2s[i], shape.M)) * cs[i];
             }
+
             return Fog(depth) * I + (1 - Fog(depth)) * FogColor;
         }
 

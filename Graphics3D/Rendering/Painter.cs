@@ -8,8 +8,8 @@ namespace Graphics3D.Rendering
     /// </summary>
     internal class Painter
     {
-        public VertexProcessor VertexProcessor { get; set; }
-        public Rasterizer Rasterizer { get; set; }
+        public VertexProcessor VertexProcessor { get; }
+        public Rasterizer Rasterizer { get; }
 
         public Painter(DirectBitmap canvas)
         {

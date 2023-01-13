@@ -5,6 +5,15 @@ namespace Graphics3D.Utility
 {
     internal class MathUtils
     {
+        /// <summary>
+        /// Interpolates a set of three values over triangle surface
+        /// </summary>
+        /// <typeparam name="T">Type of the value to be interpolated</typeparam>
+        /// <param name="vertices">Vertices of the triangle</param>
+        /// <param name="values">Values in the traingle's vertices</param>
+        /// <param name="x">First coordinate of the point where the value is to be interpolated</param>
+        /// <param name="y">Second coordinate of the point where the value is to be interpolated</param>
+        /// <returns></returns>
         public static T Interpolate<T>(List<VertexInfo> vertices, List<T> values, float x, float y)
         {
             (float wa, float wb, float wc) = GetWeights(x, y,
