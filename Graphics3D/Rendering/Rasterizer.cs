@@ -10,7 +10,7 @@ namespace Graphics3D.Rendering
     /// </summary>
     internal class Rasterizer
     {
-        public ColorPicker colorPicker;
+        public ColorPicker ColorPicker { get; set; }
         private readonly int canvasWidth;
         private readonly int canvasHeight;
         private readonly DirectBitmap canvas;
@@ -23,7 +23,7 @@ namespace Graphics3D.Rendering
             canvasWidth = canvas.Width;
             canvasHeight = canvas.Height;
             zBuffer = new float[canvasWidth, canvasHeight];
-            colorPicker = new ColorPicker();
+            ColorPicker = new ColorPicker();
 
             locks = new object[canvasWidth, canvasHeight];
             for (int i = 0; i < canvasWidth; i++)
@@ -37,13 +37,13 @@ namespace Graphics3D.Rendering
 
         public void ClearDepthBuffer()
         {
-            for (int y = 0; y < canvasHeight; y++)
+            Parallel.For(0, canvasHeight, y =>
             {
                 for (int x = 0; x < canvasWidth; x++)
                 {
                     zBuffer[x, y] = float.MaxValue;
                 }
-            }
+            });
         }
 
         public void ClearCanvas(Color color)
@@ -68,6 +68,12 @@ namespace Graphics3D.Rendering
                 using Graphics g = Graphics.FromImage(canvas.Bitmap);
                 g.DrawLine(new Pen(Color.Black, 1), prevPoint.X, prevPoint.Y, point.X, point.Y);
             }
+        }
+
+        public void FillFaceSave(List<VertexInfo> screenPoints, Shape shape)
+        {
+            var screenPointsCopy = new List<VertexInfo>(screenPoints);
+            FillFace(screenPointsCopy, shape);
         }
 
         public void FillFace(List<VertexInfo> screenPoints, Shape shape)
@@ -138,10 +144,10 @@ namespace Graphics3D.Rendering
 
                 lock (locks[x, y])
                 {
-                    if (z > zBuffer[x, y] || float.IsNaN(z))
+                    if (z >= zBuffer[x, y] || float.IsNaN(z))
                         continue;
 
-                    var (r, g, b) = colorPicker.GetColor(x, y, vertices, shape, z, worldSpaceLocation);
+                    var (r, g, b) = ColorPicker.GetColor(x, y, vertices, shape, z, worldSpaceLocation);
                     canvas.SetPixel(x, y, Color.FromArgb(r, g, b));
                     zBuffer[x, y] = z;
                 }

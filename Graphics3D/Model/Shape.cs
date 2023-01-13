@@ -7,7 +7,6 @@ namespace Graphics3D.Model
     internal class Shape
     {
         public List<Face> Faces { get; set; }
-        public int ShapeId { get; }
         public Matrix4x4 ModelMatrix { get; set; } = Matrix4x4.Identity;
         public RGB color;
 
@@ -31,10 +30,9 @@ namespace Graphics3D.Model
             get => initialDirection;
         }
 
-        public Shape(List<Face> faces, int shapeId, RGB color, Vector3 initialDirection)
+        public Shape(List<Face> faces, RGB color, Vector3 initialDirection)
         {
             Faces = faces;
-            ShapeId = shapeId;
             this.color = color;
             this.initialDirection = initialDirection;
         }
@@ -47,6 +45,7 @@ namespace Graphics3D.Model
         public void PaintShape(Painter painter)
         {
             painter.Paint(this);
+            //painter.PaintOnSingleThread(this);
         }
 
         public void RotateX(float radians)

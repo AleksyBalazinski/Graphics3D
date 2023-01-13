@@ -46,5 +46,10 @@ namespace Graphics3D.Rendering
             Bitmap.Dispose();
             BitsHandle.Free();
         }
+
+        ~DirectBitmap()
+        {
+            Dispose();
+        }
     }
 }

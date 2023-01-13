@@ -21,8 +21,8 @@ namespace Graphics3D
 
         readonly Animation animation;
 
-        private KeyboardState pressedKeys;
-        private ulong framesCount = 0;
+        KeyboardState pressedKeys;
+        ulong framesCount = 0;
 
         DateTime fpsCountStart;
 
@@ -41,12 +41,13 @@ namespace Graphics3D
             shapes = new List<Shape>();
 
             painter = new Painter(canvasBitmap);
-            painter.vertexProcessor.Zoom = 100;
-            painter.vertexProcessor.CameraPosition = new Vector3((float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
+            painter.VertexProcessor.Zoom = 100;
+            painter.VertexProcessor.CameraPosition = new Vector3((float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
 
             lightAnimator = new LightAnimator(new Vector3(initialRadius, 0, 20), 5);
 
-            animation = new Animation(painter, shapes, lightAnimator);
+            animation = new Animation(painter, lightAnimator);
+            shapes.AddRange(animation.Shapes);
 
             painter.DrawCoordinateSystem();
             animation.InitScene();
@@ -64,7 +65,7 @@ namespace Graphics3D
             {
                 string path = fileDialog.FileName;
                 List<Face> faces = ObjFileReader.Read(path);
-                shapes.Add(new Shape(faces, shapes.Count, new RGB(random.NextSingle(), random.NextSingle(), random.NextSingle()), new Vector3(-1, 0, 0)));
+                shapes.Add(new Shape(faces, new RGB(random.NextSingle(), random.NextSingle(), random.NextSingle()), new Vector3(-1, 0, 0)));
 
                 DrawScene();
             }
@@ -87,8 +88,9 @@ namespace Graphics3D
         {
             ticks++;
             framesCount++;
-            if (framesCount == 50)
+            if (framesCount == 10)
             {
+                textBoxFps.Text = string.Format("{0:0.0}", (framesCount / (DateTime.UtcNow - fpsCountStart).TotalSeconds));
                 framesCount = 1;
                 fpsCountStart = DateTime.UtcNow;
             }
@@ -103,13 +105,11 @@ namespace Graphics3D
             }
 
             DrawScene();
-
-            textBoxFps.Text = string.Format("{0:0.0}", (framesCount / (DateTime.UtcNow - fpsCountStart).TotalSeconds));
         }
 
         private void DrawScene()
         {
-            painter.rasterizer.ClearDepthBuffer();
+            painter.Rasterizer.ClearDepthBuffer();
             painter.DrawCoordinateSystem();
 
             foreach (var shape in shapes)
@@ -117,7 +117,7 @@ namespace Graphics3D
                 shape.PaintShape(painter);
             }
 
-            canvas.Invalidate();
+            canvas.Refresh();
         }
 
         private void buttonClear_Click(object sender, EventArgs e)
@@ -128,23 +128,23 @@ namespace Graphics3D
         private void ClearScene()
         {
             shapes.Clear();
-            painter.rasterizer.ClearCanvas(Color.White);
+            painter.Rasterizer.ClearCanvas(Color.White);
 
             DrawScene();
         }
 
         private void trackBarScale_Scroll(object sender, EventArgs e)
         {
-            painter.vertexProcessor.Zoom = trackBarScale.Value * 5;
-            painter.rasterizer.ClearCanvas(painter.rasterizer.colorPicker.fogColor);
+            painter.VertexProcessor.Zoom = trackBarScale.Value * 5;
+            painter.Rasterizer.ClearCanvas(painter.Rasterizer.ColorPicker.FogColor);
 
             DrawScene();
         }
 
         private void trackBarFov_Scroll(object sender, EventArgs e)
         {
-            painter.vertexProcessor.FieldOfView = trackBarFov.Value / 100f;
-            painter.rasterizer.ClearCanvas(painter.rasterizer.colorPicker.fogColor);
+            painter.VertexProcessor.FieldOfView = trackBarFov.Value / 100f;
+            painter.Rasterizer.ClearCanvas(painter.Rasterizer.ColorPicker.FogColor);
 
             DrawScene();
         }
@@ -166,8 +166,8 @@ namespace Graphics3D
 
         private void InvalidateCameraPosition()
         {
-            painter.vertexProcessor.CameraPosition = new Vector3((float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
-            painter.rasterizer.ClearCanvas(painter.rasterizer.colorPicker.fogColor);
+            painter.VertexProcessor.CameraPosition = new Vector3((float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
+            painter.Rasterizer.ClearCanvas(painter.Rasterizer.ColorPicker.FogColor);
             DrawScene();
         }
 
@@ -181,15 +181,15 @@ namespace Graphics3D
         {
             if (radioButtonNormals.Checked)
             {
-                painter.rasterizer.colorPicker.interpolantType = InterpolantType.NormalVector;
+                painter.Rasterizer.ColorPicker.Interpolant = InterpolantType.NormalVector;
             }
             else if (radioButtonColors.Checked)
             {
-                painter.rasterizer.colorPicker.interpolantType = InterpolantType.Color;
+                painter.Rasterizer.ColorPicker.Interpolant = InterpolantType.Color;
             }
             else if (radioButtonConst.Checked)
             {
-                painter.rasterizer.colorPicker.interpolantType = InterpolantType.Constant;
+                painter.Rasterizer.ColorPicker.Interpolant = InterpolantType.Constant;
             }
         }
 
@@ -214,7 +214,7 @@ namespace Graphics3D
         private void trackBarLightZ_Scroll(object sender, EventArgs e)
         {
             lightAnimator.Z = trackBarLightZ.Value;
-            painter.rasterizer.colorPicker.lightSources[0].lightDirection
+            painter.Rasterizer.ColorPicker.LightSources[0].LightDirection
                 = Vector3.Normalize(lightAnimator.MoveLightSource());
 
             DrawScene();
@@ -228,16 +228,16 @@ namespace Graphics3D
 
         private void radioButtonCamFixed_CheckedChanged(object sender, EventArgs e)
         {
-            painter.vertexProcessor.CameraPosition = new Vector3(
+            painter.VertexProcessor.CameraPosition = new Vector3(
                 (float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
-            painter.vertexProcessor.CameraTarget = new Vector3(0);
+            painter.VertexProcessor.CameraTarget = new Vector3(0);
 
             animation.CameraType = Animation.CamType.Fixed;
         }
 
         private void radioButtonCamTracking_CheckedChanged(object sender, EventArgs e)
         {
-            painter.vertexProcessor.CameraPosition = new Vector3(
+            painter.VertexProcessor.CameraPosition = new Vector3(
                 (float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
 
             animation.CameraType = Animation.CamType.Tracking;

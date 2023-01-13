@@ -8,28 +8,47 @@ namespace Graphics3D.Rendering
     /// </summary>
     internal class Painter
     {
-        public VertexProcessor vertexProcessor;
-        public Rasterizer rasterizer;
+        public VertexProcessor VertexProcessor { get; set; }
+        public Rasterizer Rasterizer { get; set; }
 
         public Painter(DirectBitmap canvas)
         {
-            vertexProcessor = new VertexProcessor(canvas.Width, canvas.Height);
-            rasterizer = new Rasterizer(canvas);
+            VertexProcessor = new VertexProcessor(canvas.Width, canvas.Height);
+            Rasterizer = new Rasterizer(canvas);
         }
 
         public void Paint(Shape shape)
         {
             var modelMatrix = shape.ModelMatrix;
             List<VertexInfo>[] faceInfos = new List<VertexInfo>[shape.Faces.Count];
-            Parallel.For(0, shape.Faces.Count, index =>
+
+            var options = new ParallelOptions() { MaxDegreeOfParallelism = Environment.ProcessorCount - 1 };
+            Parallel.For(0, shape.Faces.Count, options, index =>
             {
-                faceInfos[index] = vertexProcessor.ProcessFace(shape.Faces[index], modelMatrix);
+                faceInfos[index] = VertexProcessor.ProcessFace(shape.Faces[index], modelMatrix);
             });
 
-            Parallel.For(0, shape.Faces.Count, index =>
+            Parallel.For(0, shape.Faces.Count, options, index =>
             {
-                rasterizer.FillFace(faceInfos[index], shape);
+                Rasterizer.FillFace(faceInfos[index], shape);
             });
+        }
+
+        public void PaintOnSingleThread(Shape shape)
+        {
+            var modelMatrix = shape.ModelMatrix;
+            List<VertexInfo>[] faceInfos = new List<VertexInfo>[shape.Faces.Count];
+
+            var options = new ParallelOptions() { MaxDegreeOfParallelism = Environment.ProcessorCount - 1 };
+            Parallel.For(0, shape.Faces.Count, options, index =>
+            {
+                faceInfos[index] = VertexProcessor.ProcessFace(shape.Faces[index], modelMatrix);
+            });
+
+            for (int i = 0; i < shape.Faces.Count; i++)
+            {
+                Rasterizer.FillFace(faceInfos[i], shape);
+            };
         }
 
         public void DrawMesh(Shape shape)
@@ -38,9 +57,9 @@ namespace Graphics3D.Rendering
             foreach (var face in shape.Faces)
             {
                 List<VertexInfo> vertexInfos
-                    = face.Vertices.Select(v => vertexProcessor.Process(v, modelMatrix)).ToList();
+                    = face.Vertices.Select(v => VertexProcessor.Process(v, modelMatrix)).ToList();
 
-                rasterizer.DrawFaceBoundary(vertexInfos);
+                Rasterizer.DrawFaceBoundary(vertexInfos);
             }
         }
 
@@ -48,10 +67,10 @@ namespace Graphics3D.Rendering
         {
             Vertex startVertex = new(start, new Vector3());
             Vertex endVertex = new(end, new Vector3());
-            var startInfo = vertexProcessor.Process(startVertex, Matrix4x4.Identity);
-            var endInfo = vertexProcessor.Process(endVertex, Matrix4x4.Identity);
+            var startInfo = VertexProcessor.Process(startVertex, Matrix4x4.Identity);
+            var endInfo = VertexProcessor.Process(endVertex, Matrix4x4.Identity);
 
-            rasterizer.DrawArrow(startInfo, endInfo, color);
+            Rasterizer.DrawArrow(startInfo, endInfo, color);
         }
 
         public void DrawCoordinateSystem()

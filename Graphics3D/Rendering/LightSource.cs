@@ -5,33 +5,32 @@ namespace Graphics3D.Rendering
 {
     internal class LightSource
     {
-        public LightSource(Type type, Vector3 lightDirection, RGB lightColor)
-        {
-            this.lightDirection = lightDirection;
-            this.lightColor = lightColor;
-            this.type = type;
-        }
-
-        public LightSource(Type type, Vector3 lightDirection, RGB lightColor, float e, float cutoff, Vector3 location)
-        {
-            this.lightDirection = lightDirection;
-            this.lightColor = lightColor;
-            this.type = type;
-            this.e = e;
-            this.cutoff = cutoff;
-            this.location = location;
-        }
-
-        public Type type;
-        public Vector3 lightDirection;
-        public RGB lightColor;
+        public LightSourceType Type { get; set; }
+        public Vector3 LightDirection { get; set; }
+        public RGB LightColor { get; set; }
 
         // spotlight characteristics
-        public float e;
-        public float cutoff;
-        public Vector3 location;
+        public float E { get; set; }
+        public float Cutoff { get; set; }
+        public Vector3 Location { get; set; }
+        public LightSource(LightSourceType type, Vector3 lightDirection, RGB lightColor)
+        {
+            LightDirection = lightDirection;
+            LightColor = lightColor;
+            Type = type;
+        }
 
-        public enum Type
+        public LightSource(LightSourceType type, Vector3 lightDirection, RGB lightColor, float e, float cutoff, Vector3 location)
+        {
+            LightDirection = lightDirection;
+            LightColor = lightColor;
+            Type = type;
+            E = e;
+            Cutoff = cutoff;
+            Location = location;
+        }
+
+        public enum LightSourceType
         {
             Point,
             Spotlight

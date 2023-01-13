@@ -1,7 +1,6 @@
 ﻿using Graphics3D.Model;
 using Graphics3D.Rendering;
 using Graphics3D.Utility;
-using System.Diagnostics;
 using System.Numerics;
 
 namespace Graphics3D
@@ -17,16 +16,19 @@ namespace Graphics3D
     {
         bool animateLight = false;
 
-        readonly Painter painter;
-        readonly List<Shape> shapes;
+        private readonly Painter painter;
 
+        private readonly Shape car;
+        private readonly Shape cube;
+        private readonly Shape sphere;
+        private readonly List<Shape> shapes;
+        public List<Shape> Shapes { get => shapes; }
+
+        // environment
         private bool darken = true;
-        private bool swingRight = true;
-        private float swingAngle = 0f;
-        private int r = 255;
-        private int g = 255;
-        private int b = 255;
+        private RGB backgroundColor = new(1, 1, 1);
 
+        // car's position
         private float prevX = 0;
         private float prevY = 0;
         private float x = 0;
@@ -39,6 +41,8 @@ namespace Graphics3D
         // car's movement
         private float speed = 0.1f;
         private float angle = 0;
+        private bool swingRight = true;
+        private float swingAngle = 0f;
 
         public CamType CameraType { get; set; }
 
@@ -50,39 +54,42 @@ namespace Graphics3D
         readonly LightAnimator lightAnimator;
         const float initialRadius = 30;
 
-        public Animation(Painter painter, List<Shape> shapes, LightAnimator lightAnimator)
+        public Animation(Painter painter, LightAnimator lightAnimator)
         {
             this.painter = painter;
-            this.shapes = shapes;
             this.lightAnimator = lightAnimator;
+
+            string carObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\car.obj"));
+            List<Face> faces = ObjFileReader.Read(carObj);
+            car = new Shape(faces, new RGB(Color.LightBlue), -Vector3.UnitX);
+
+            string sphereObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\sphere.obj"));
+            faces = ObjFileReader.Read(sphereObj);
+            sphere = new Shape(faces, new RGB(Color.PaleGreen), Vector3.UnitX);
+
+            string cubeObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\cube.obj"));
+            faces = ObjFileReader.Read(cubeObj);
+            cube = new Shape(faces, new RGB(Color.IndianRed), Vector3.UnitX);
+
+            shapes = new List<Shape> { car, sphere, cube };
         }
 
         public void InitScene()
         {
-            string carObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\car.obj"));
-            List<Face> faces = ObjFileReader.Read(carObj);
-            shapes.Add(new Shape(faces, shapes.Count, new RGB(Color.LightBlue), -Vector3.UnitX));
+            sphere.Scale(2);
+            sphere.Translate(-10, 0, 0);
 
-            string sphereObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\sphere.obj"));
-            faces = ObjFileReader.Read(sphereObj);
-            shapes.Add(new Shape(faces, shapes.Count, new RGB(Color.PaleGreen), Vector3.UnitX));
-            shapes[1].Scale(2);
-            shapes[1].Translate(-10, 0, 0);
+            cube.Scale(2);
+            cube.Translate(-10, -7, 0);
 
-            string cubeObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\cube.obj"));
-            faces = ObjFileReader.Read(cubeObj);
-            shapes.Add(new Shape(faces, shapes.Count, new RGB(Color.IndianRed), Vector3.UnitX));
-            shapes[2].Scale(2);
-            shapes[2].Translate(-10, -7, 0);
+            painter.Rasterizer.ColorPicker.LightSources.Add(
+                new LightSource(LightSource.LightSourceType.Spotlight, new Vector3(0, 0, 1), new RGB(Color.White), 2, 0.7f, new Vector3(0, 0, 2)));
 
-            painter.rasterizer.colorPicker.lightSources.Add(
-                new LightSource(LightSource.Type.Spotlight, new Vector3(0, 0, 1), new RGB(Color.White), 2, 0.7f, new Vector3(0, 0, 2)));
+            painter.Rasterizer.ColorPicker.LightSources.Add(
+                new LightSource(LightSource.LightSourceType.Point, new Vector3(0, 0, 1), new RGB(Color.Gray)));
 
-            painter.rasterizer.colorPicker.lightSources.Add(
-                new LightSource(LightSource.Type.Point, new Vector3(0, 0, 1), new RGB(Color.Gray)));
-
-            painter.rasterizer.colorPicker.lightSources.Add(
-                new LightSource(LightSource.Type.Point, new Vector3(1, 0, 0), new RGB(Color.Yellow)));
+            painter.Rasterizer.ColorPicker.LightSources.Add(
+                new LightSource(LightSource.LightSourceType.Point, new Vector3(1, 0, 0), new RGB(Color.Yellow)));
         }
 
         public void HandleInput(KeyboardState keyboard)
@@ -121,12 +128,10 @@ namespace Graphics3D
             if ((keyboard & KeyboardState.pressedJ) != 0)
             {
                 horizontalLightAngle += 0.1f;
-                Debug.WriteLine("horizontalLightAngle = {0}", horizontalLightAngle);
             }
             if ((keyboard & KeyboardState.pressedL) != 0)
             {
                 horizontalLightAngle -= 0.1f;
-                Debug.WriteLine("horizontalLightAngle = {0}", horizontalLightAngle);
             }
         }
 
@@ -134,7 +139,7 @@ namespace Graphics3D
         {
             Thread.Sleep(1);
             float a = 5;
-            var (s, c) = MathF.SinCos(ticks / 200f);
+            var (s, c) = MathF.SinCos(ticks / 20f);
             x = (a * c) / (1 + MathF.Pow(s, 2));
             y = (a * s * c) / (1 + MathF.Pow(s, 2));
 
@@ -143,81 +148,47 @@ namespace Graphics3D
 
         public void UpdateScene(bool swinging)
         {
-            UpdateDayNightTransition(step: 1);
+            UpdateDayNightTransition(stepBrightnessChange: new RGB(1 / 255.0f, 1 / 255.0f, 1 / 255.0f));
 
-            painter.rasterizer.ClearCanvas(Color.FromArgb(r, g, b));
+            painter.Rasterizer.ClearCanvas(backgroundColor);
 
             if (x != prevX || y != prevY)
             {
-                shapes[0].ResetPosition();
+                car.ResetPosition();
 
-                shapes[0].direction.X = x - prevX;
-                shapes[0].direction.Y = y - prevY;
-                shapes[0].direction.Z = 0;
+                car.direction.X = x - prevX;
+                car.direction.Y = y - prevY;
+                car.direction.Z = 0;
 
                 if (swinging)
                 {
                     UpdateSwing(swingAngleStep: 0.05f, maxSwing: 0.2f);
-                    shapes[0].RotateX(swingAngle);
+                    car.RotateX(swingAngle);
                 }
 
-                shapes[0].ApplyGeneralRotation(MathUtils.RotateOnto(shapes[0].InitialDirection, shapes[0].direction)); // TODO change to z rotation
-                shapes[0].Translate(x, y, 0f);
+                car.ApplyGeneralRotation(MathUtils.RotateOnto(car.InitialDirection, car.direction));
+                car.Translate(x, y, 0f);
                 prevX = x; prevY = y;
 
-                painter.rasterizer.colorPicker.lightSources[0].location = shapes[0].Position + Vector3.Normalize(shapes[0].direction);
-                if (horizontalLightAngle == 0 && verticalLightAngle == 0)
-                {
-                    painter.rasterizer.colorPicker.lightSources[0].lightDirection = -Vector3.Normalize(shapes[0].direction);
-                }
-                else
-                {
-                    var horizontalRotation = Matrix4x4.CreateRotationZ(horizontalLightAngle);
-                    var verticalRotationAxis = Vector3.Normalize(Vector3.Cross(shapes[0].direction, Vector3.UnitZ));
-                    var verticalRotation = Quaternion.CreateFromAxisAngle(verticalRotationAxis, verticalLightAngle);
-
-                    Vector3 u = new Vector3(verticalRotation.X, verticalRotation.Y, verticalRotation.Z);
-                    float s = verticalRotation.W;
-                    var lightDirection = 2 * Vector3.Dot(u, shapes[0].direction) * u
-                        + (s * s - Vector3.Dot(u, u)) * shapes[0].direction
-                        + 2 * s * Vector3.Cross(u, shapes[0].direction);
-
-                    lightDirection = Vector3.Transform(lightDirection, horizontalRotation);
-                    lightDirection = -Vector3.Normalize(lightDirection);
-
-                    painter.rasterizer.colorPicker.lightSources[0].lightDirection = lightDirection;
-                }
+                UpdateLighting();
             }
 
-            if (CameraType == CamType.Tracking)
-            {
-                painter.vertexProcessor.CameraTarget = shapes[0].Position;
-            }
-            if (CameraType == CamType.TPP)
-            {
-                float camDist = 3;
-                float targetDist = 10;
-                Vector3 camElevation = new Vector3(0, 0, 4f);
-                Vector3 camPosition = shapes[0].Position - (Vector3.Normalize(shapes[0].direction) * camDist) + camElevation;
-                Vector3 camTarget = shapes[0].Position + Vector3.Normalize(shapes[0].direction) * targetDist;
-                painter.vertexProcessor.CameraPosition = camPosition;
-                painter.vertexProcessor.CameraTarget = camTarget;
-            }
+            UpdateCamera();
 
             if (animateLight)
             {
-                painter.rasterizer.colorPicker.lightSources[0].lightDirection =
+                painter.Rasterizer.ColorPicker.LightSources[0].LightDirection =
                     Vector3.Normalize(lightAnimator.MoveLightSource());
             }
         }
 
         public void UpdateSceneInteractive(bool swinging)
         {
-            UpdateDayNightTransition(step: 1);
+            UpdateDayNightTransition(stepBrightnessChange: new RGB(1 / 255.0f, 1 / 255.0f, 1 / 255.0f));
 
-            painter.rasterizer.ClearCanvas(Color.FromArgb(r, g, b));
+            painter.Rasterizer.ClearCanvas(backgroundColor);
 
-            Vector3 initialDir = shapes[0].InitialDirection;
+            Vector3 initialDir = car.InitialDirection;
             var newDir = Vector3.Transform(initialDir, Matrix4x4.CreateRotationZ(angle));
             Vector3 newPosition = new Vector3(prevX, prevY, 0) + Vector3.Normalize(newDir) * speed;
             x = newPosition.X;
@@ -225,66 +196,76 @@ namespace Graphics3D
 
             if (x != prevX || y != prevY)
             {
-                shapes[0].ResetPosition();
+                car.ResetPosition();
 
-                shapes[0].direction.X = x - prevX;
-                shapes[0].direction.Y = y - prevY;
-                shapes[0].direction.Z = 0;
+                car.direction.X = x - prevX;
+                car.direction.Y = y - prevY;
+                car.direction.Z = 0;
 
                 if (swinging)
                 {
                     UpdateSwing(swingAngleStep: 0.05f, maxSwing: 0.2f);
-                    shapes[0].RotateX(swingAngle);
+                    car.RotateX(swingAngle);
                 }
 
-                shapes[0].ApplyGeneralRotation(Matrix4x4.CreateRotationZ(angle));
-                shapes[0].Translate(newPosition.X, newPosition.Y, newPosition.Z);
+                car.ApplyGeneralRotation(Matrix4x4.CreateRotationZ(angle));
+                car.Translate(newPosition.X, newPosition.Y, newPosition.Z);
                 prevX = x; prevY = y;
 
-                painter.rasterizer.colorPicker.lightSources[0].location = shapes[0].Position + Vector3.Normalize(shapes[0].direction);
-                if (horizontalLightAngle == 0 && verticalLightAngle == 0)
-                {
-                    painter.rasterizer.colorPicker.lightSources[0].lightDirection = -Vector3.Normalize(shapes[0].direction);
-                }
-                else
-                {
-                    var horizontalRotation = Matrix4x4.CreateRotationZ(horizontalLightAngle);
-                    var verticalRotationAxis = Vector3.Normalize(Vector3.Cross(shapes[0].direction, Vector3.UnitZ));
-                    var verticalRotation = Quaternion.CreateFromAxisAngle(verticalRotationAxis, verticalLightAngle);
-
-                    Vector3 u = new Vector3(verticalRotation.X, verticalRotation.Y, verticalRotation.Z);
-                    float s = verticalRotation.W;
-                    var lightDirection = 2 * Vector3.Dot(u, shapes[0].direction) * u
-                        + (s * s - Vector3.Dot(u, u)) * shapes[0].direction
-                        + 2 * s * Vector3.Cross(u, shapes[0].direction);
-
-                    lightDirection = Vector3.Transform(lightDirection, horizontalRotation);
-                    lightDirection = -Vector3.Normalize(lightDirection);
-
-                    painter.rasterizer.colorPicker.lightSources[0].lightDirection = lightDirection;
-                }
+                UpdateLighting();
             }
 
 
+            UpdateCamera();
+
+            if (animateLight)
+            {
+                painter.Rasterizer.ColorPicker.LightSources[0].LightDirection =
+                    Vector3.Normalize(lightAnimator.MoveLightSource());
+            }
+        }
+
+        private void UpdateLighting()
+        {
+            painter.Rasterizer.ColorPicker.LightSources[0].Location = car.Position + Vector3.Normalize(car.direction);
+            if (horizontalLightAngle == 0 && verticalLightAngle == 0)
+            {
+                painter.Rasterizer.ColorPicker.LightSources[0].LightDirection = -Vector3.Normalize(car.direction);
+            }
+            else
+            {
+                var horizontalRotation = Matrix4x4.CreateRotationZ(horizontalLightAngle);
+                var verticalRotationAxis = Vector3.Normalize(Vector3.Cross(car.direction, Vector3.UnitZ));
+                var verticalRotation = Quaternion.CreateFromAxisAngle(verticalRotationAxis, verticalLightAngle);
+
+                Vector3 u = new(verticalRotation.X, verticalRotation.Y, verticalRotation.Z);
+                float s = verticalRotation.W;
+                var lightDirection = 2 * Vector3.Dot(u, car.direction) * u
+                    + (s * s - Vector3.Dot(u, u)) * car.direction
+                    + 2 * s * Vector3.Cross(u, car.direction);
+
+                lightDirection = Vector3.Transform(lightDirection, horizontalRotation);
+                lightDirection = -Vector3.Normalize(lightDirection);
+
+                painter.Rasterizer.ColorPicker.LightSources[0].LightDirection = lightDirection;
+            }
+        }
+
+        private void UpdateCamera()
+        {
             if (CameraType == CamType.Tracking)
             {
-                painter.vertexProcessor.CameraTarget = shapes[0].Position;
+                painter.VertexProcessor.CameraTarget = car.Position;
             }
             if (CameraType == CamType.TPP)
             {
                 float camDist = 3;
                 float targetDist = 10;
-                Vector3 camElevation = new Vector3(0, 0, 4f);
-                Vector3 camPosition = shapes[0].Position - (Vector3.Normalize(shapes[0].direction) * camDist) + camElevation;
-                Vector3 camTarget = shapes[0].Position + Vector3.Normalize(shapes[0].direction) * targetDist;
-                painter.vertexProcessor.CameraPosition = camPosition;
-                painter.vertexProcessor.CameraTarget = camTarget;
-            }
-
-            if (animateLight)
-            {
-                painter.rasterizer.colorPicker.lightSources[0].lightDirection =
-                    Vector3.Normalize(lightAnimator.MoveLightSource());
+                Vector3 camElevation = new(0, 0, 4f);
+                Vector3 camPosition = car.Position - (Vector3.Normalize(car.direction) * camDist) + camElevation;
+                Vector3 camTarget = car.Position + Vector3.Normalize(car.direction) * targetDist;
+                painter.VertexProcessor.CameraPosition = camPosition;
+                painter.VertexProcessor.CameraTarget = camTarget;
             }
         }
 
@@ -304,45 +285,41 @@ namespace Graphics3D
             }
         }
 
-        private void UpdateDayNightTransition(int step)
+        private void UpdateDayNightTransition(RGB stepBrightnessChange)
         {
             if (darken)
             {
-                r -= step; g -= step; b -= step;
-                painter.rasterizer.colorPicker.fogColor.r -= step / 255.0f;
-                painter.rasterizer.colorPicker.fogColor.g -= step / 255.0f;
-                painter.rasterizer.colorPicker.fogColor.b -= step / 255.0f;
-
-                for (int i = 1; i < painter.rasterizer.colorPicker.lightSources.Count; i++)
+                if ((backgroundColor - stepBrightnessChange).R <= 0)
                 {
-                    var lightSource = painter.rasterizer.colorPicker.lightSources[i];
-
-                    lightSource.lightColor.r -= step / 255.0f;
-                    lightSource.lightColor.g -= step / 255.0f;
-                    lightSource.lightColor.b -= step / 255.0f;
+                    darken = false;
                 }
 
-                if (r == 0)
-                    darken = false;
+                painter.Rasterizer.ColorPicker.FogColor -= stepBrightnessChange;
+                backgroundColor -= stepBrightnessChange;
+
+                for (int i = 1; i < painter.Rasterizer.ColorPicker.LightSources.Count; i++)
+                {
+                    var lightSource = painter.Rasterizer.ColorPicker.LightSources[i];
+
+                    lightSource.LightColor -= stepBrightnessChange;
+                }
             }
             else
             {
-                r += step; g += step; b += step;
-                painter.rasterizer.colorPicker.fogColor.r += step / 255.0f;
-                painter.rasterizer.colorPicker.fogColor.g += step / 255.0f;
-                painter.rasterizer.colorPicker.fogColor.b += step / 255.0f;
-
-                for (int i = 1; i < painter.rasterizer.colorPicker.lightSources.Count; i++)
+                if ((backgroundColor - stepBrightnessChange).R >= 1)
                 {
-                    var lightSource = painter.rasterizer.colorPicker.lightSources[i];
-
-                    lightSource.lightColor.r += step / 255.0f;
-                    lightSource.lightColor.g += step / 255.0f;
-                    lightSource.lightColor.b += step / 255.0f;
+                    darken = true;
                 }
 
-                if (r == 255)
-                    darken = true;
+                painter.Rasterizer.ColorPicker.FogColor += stepBrightnessChange;
+                backgroundColor += stepBrightnessChange;
+
+                for (int i = 1; i < painter.Rasterizer.ColorPicker.LightSources.Count; i++)
+                {
+                    var lightSource = painter.Rasterizer.ColorPicker.LightSources[i];
+
+                    lightSource.LightColor += stepBrightnessChange;
+                }
             }
         }
     }

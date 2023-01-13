@@ -142,9 +142,9 @@
             // 
             // buttonPauseInteractive
             // 
-            this.buttonPauseInteractive.Location = new System.Drawing.Point(385, 26);
+            this.buttonPauseInteractive.Location = new System.Drawing.Point(348, 17);
             this.buttonPauseInteractive.Name = "buttonPauseInteractive";
-            this.buttonPauseInteractive.Size = new System.Drawing.Size(75, 39);
+            this.buttonPauseInteractive.Size = new System.Drawing.Size(76, 48);
             this.buttonPauseInteractive.TabIndex = 6;
             this.buttonPauseInteractive.Text = "Pause interactive";
             this.buttonPauseInteractive.UseVisualStyleBackColor = true;
@@ -152,9 +152,9 @@
             // 
             // buttonStartInteractive
             // 
-            this.buttonStartInteractive.Location = new System.Drawing.Point(288, 22);
+            this.buttonStartInteractive.Location = new System.Drawing.Point(267, 17);
             this.buttonStartInteractive.Name = "buttonStartInteractive";
-            this.buttonStartInteractive.Size = new System.Drawing.Size(75, 43);
+            this.buttonStartInteractive.Size = new System.Drawing.Size(75, 48);
             this.buttonStartInteractive.TabIndex = 5;
             this.buttonStartInteractive.Text = "Start interactive";
             this.buttonStartInteractive.UseVisualStyleBackColor = true;
