@@ -39,7 +39,7 @@ namespace Graphics3D
 
             painter = new Painter(canvasBitmap);
             painter.VertexProcessor.Zoom = 100;
-            painter.VertexProcessor.CameraPosition = new Vector3((float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
+            painter.CameraPosition = new Vector3((float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
 
             animation = new Animation(painter);
             shapes.AddRange(animation.Shapes);
@@ -167,7 +167,7 @@ namespace Graphics3D
 
         private void InvalidateCameraPosition()
         {
-            painter.VertexProcessor.CameraPosition = new Vector3((float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
+            painter.CameraPosition = new Vector3((float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
             painter.Rasterizer.ClearCanvas(painter.Rasterizer.ColorPicker.FogColor);
             DrawScene();
         }
@@ -208,16 +208,16 @@ namespace Graphics3D
 
         private void radioButtonCamFixed_CheckedChanged(object sender, EventArgs e)
         {
-            painter.VertexProcessor.CameraPosition = new Vector3(
+            painter.CameraPosition = new Vector3(
                 (float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
-            painter.VertexProcessor.CameraTarget = new Vector3(0);
+            painter.CameraTarget = new Vector3(0);
 
             animation.CameraType = Animation.CamType.Fixed;
         }
 
         private void radioButtonCamTracking_CheckedChanged(object sender, EventArgs e)
         {
-            painter.VertexProcessor.CameraPosition = new Vector3(
+            painter.CameraPosition = new Vector3(
                 (float)numericUpDownCamX.Value, (float)numericUpDownCamY.Value, (float)numericUpDownCamZ.Value);
 
             animation.CameraType = Animation.CamType.Tracking;

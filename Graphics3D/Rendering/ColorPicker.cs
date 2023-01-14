@@ -10,6 +10,7 @@ namespace Graphics3D.Rendering
         public RGB Ambient { get; set; }
         public List<LightSource> LightSources { get; set; }
         public RGB FogColor { get; set; }
+        public Vector3 CameraPosition { get; set; }
 
         public ColorPicker()
         {
@@ -30,7 +31,7 @@ namespace Graphics3D.Rendering
         /// <param name="worldSpaceLocation">Coordinates of a point that maps to this pixel</param>
         /// <returns>Color of this pixel as an RGB triple with each color in range 0..255</returns>
         /// <exception cref="NotSupportedException">Thrown when ColorPicker is set to use an unknown interpolation method</exception>
-        public (int, int, int) GetColor(int x, int y, List<VertexInfo> vertices, Shape shape, float depth, Vector4 worldSpaceLocation)
+        public (int, int, int) GetColor(int x, int y, List<VertexInfo> vertices, Shape shape, float depth, Vector3 worldSpaceLocation)
         {
             RGB color;
             if (Interpolant == InterpolantType.Color)
@@ -56,14 +57,17 @@ namespace Graphics3D.Rendering
             return color.ToRGB255();
         }
 
-        private RGB ApplyLighting(Shape shape, Vector3 normal, float depth, Vector4 worldSpaceLocation)
+        /// <summary>
+        /// <see href="https://en.wikipedia.org/wiki/Phong_reflection_model#Description">Phong reflection model</see> implementation
+        /// </summary>
+        private RGB ApplyLighting(Shape shape, Vector3 normal, float depth, Vector3 worldSpaceLocation)
         {
             if (LightSources.Count == 0)
             {
                 return shape.Ka * Ambient;
             }
 
-            Vector3 vert = new(0, 0, 1);
+            Vector3 V = Vector3.Normalize(CameraPosition - worldSpaceLocation);
             Vector3 N = Vector3.Normalize(normal);
 
             var Rs = LightSources.Select(
@@ -77,7 +81,7 @@ namespace Graphics3D.Rendering
 
             var cos2s = Rs.Select(R =>
             {
-                float cos2 = Vector3.Dot(vert, R);
+                float cos2 = Vector3.Dot(V, R);
                 return cos2 < 0 ? 0 : cos2;
             }).ToList();
 

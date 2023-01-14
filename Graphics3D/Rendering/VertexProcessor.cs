@@ -18,6 +18,14 @@ namespace Graphics3D.Rendering
             get => fieldOfView;
         }
 
+        /// <summary>
+        /// Gets and sets camera position
+        /// </summary>
+        /// <remarks>
+        /// <note type="Cautionary">
+        /// This property should be modified through Painter to ensure consistency of the pipeline
+        /// </note>
+        /// </remarks>
         public Vector3 CameraPosition
         {
             set
@@ -28,6 +36,14 @@ namespace Graphics3D.Rendering
             get => cameraPosition;
         }
 
+        /// <summary>
+        /// Gets and sets camera target
+        /// </summary>
+        /// <remarks>
+        /// <note type="Cautionary">
+        /// This property should be modified through Painter to ensure consistency of the pipeline
+        /// </note>
+        /// </remarks>
         public Vector3 CameraTarget
         {
             set
@@ -106,7 +122,8 @@ namespace Graphics3D.Rendering
 
                 (float screenX, float screenY) = ToScreen(normalized);
                 var worldSpaceNormal = Vector3.TransformNormal(vertex.NormalVector, modelMatrix);
-                faceInfo.Add(new VertexInfo(screenX, screenY, clipCoordinates.Z, worldSpaceNormal, worldSpaceCoordinates));
+                var worldSpaceLocation = new Vector3(worldSpaceCoordinates.X, worldSpaceCoordinates.Y, worldSpaceCoordinates.Z);
+                faceInfo.Add(new VertexInfo(screenX, screenY, clipCoordinates.Z, worldSpaceNormal, worldSpaceLocation));
             }
 
             return faceInfo;
@@ -122,8 +139,9 @@ namespace Graphics3D.Rendering
 
             (float screenX, float screenY) = ToScreen(normalized);
             var worldSpaceNormal = Vector3.TransformNormal(vertex.NormalVector, modelMatrix);
+            var worldSpaceLocation = new Vector3(worldSpaceCoordinates.X, worldSpaceCoordinates.Y, worldSpaceCoordinates.Z);
 
-            return new VertexInfo(screenX, screenY, normalized.Z, worldSpaceNormal, worldSpaceCoordinates);
+            return new VertexInfo(screenX, screenY, normalized.Z, worldSpaceNormal, worldSpaceLocation);
         }
 
         private (float, float) ToScreen(Vector3 point)

@@ -134,7 +134,7 @@ namespace Graphics3D.Rendering
             for (int x = xStart; x <= xEnd; x++)
             {
                 float z = MathUtils.Interpolate(vertices, vertices.Select(v => v.depth).ToList(), x, y);
-                Vector4 worldSpaceLocation = MathUtils.Interpolate(vertices, vertices.Select(v => v.worldSpaceLocation).ToList(), x, y);
+                Vector3 worldSpaceLocation = MathUtils.Interpolate(vertices, vertices.Select(v => v.worldSpaceLocation).ToList(), x, y);
 
                 lock (locks[x, y])
                 {

@@ -83,7 +83,7 @@ namespace Graphics3D
                 new LightSource(LightSource.LightSourceType.Spotlight, new Vector3(0, 0, 1), new RGB(Color.White), 2, 0.7f, new Vector3(0, 0, 2)));
 
             painter.Rasterizer.ColorPicker.LightSources.Add(
-                new LightSource(LightSource.LightSourceType.Point, new Vector3(0, 0, 1), new RGB(Color.Gray)));
+                new LightSource(LightSource.LightSourceType.Point, new Vector3(0, 0, 1), new RGB(Color.White)));
 
             painter.Rasterizer.ColorPicker.LightSources.Add(
                 new LightSource(LightSource.LightSourceType.Point, new Vector3(1, 0, 0), new RGB(Color.Yellow)));
@@ -239,7 +239,7 @@ namespace Graphics3D
         {
             if (CameraType == CamType.Tracking)
             {
-                painter.VertexProcessor.CameraTarget = car.Position;
+                painter.CameraTarget = car.Position;
             }
             if (CameraType == CamType.TPP)
             {
@@ -248,8 +248,8 @@ namespace Graphics3D
                 Vector3 camElevation = new(0, 0, 4f);
                 Vector3 camPosition = car.Position - (Vector3.Normalize(car.direction) * camDist) + camElevation;
                 Vector3 camTarget = car.Position + Vector3.Normalize(car.direction) * targetDist;
-                painter.VertexProcessor.CameraPosition = camPosition;
-                painter.VertexProcessor.CameraTarget = camTarget;
+                painter.CameraPosition = camPosition;
+                painter.CameraTarget = camTarget;
             }
         }
 

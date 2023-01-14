@@ -11,8 +11,8 @@ namespace Graphics3D.Rendering
         public float Y;
         public float depth;
         public Vector3 normal; // normal vector in world coordinates
-        public Vector4 worldSpaceLocation;
-        public VertexInfo(float X, float Y, float depth, Vector3 normal, Vector4 worldSpaceLocation)
+        public Vector3 worldSpaceLocation;
+        public VertexInfo(float X, float Y, float depth, Vector3 normal, Vector3 worldSpaceLocation)
         {
             this.X = X;
             this.Y = Y;

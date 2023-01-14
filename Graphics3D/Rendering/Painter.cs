@@ -10,6 +10,28 @@ namespace Graphics3D.Rendering
     {
         public VertexProcessor VertexProcessor { get; }
         public Rasterizer Rasterizer { get; }
+        public Vector3 CameraPosition 
+        {
+            get => cameraPosition;
+            set
+            {
+                cameraPosition = value;
+                VertexProcessor.CameraPosition = value;
+                Rasterizer.ColorPicker.CameraPosition = value;
+            }
+        }
+        public Vector3 CameraTarget
+        {
+            get => cameraTarget;
+            set
+            {
+                cameraTarget = value;
+                VertexProcessor.CameraTarget = value;
+            }
+        }
+
+        private Vector3 cameraPosition;
+        private Vector3 cameraTarget;
 
         public Painter(DirectBitmap canvas)
         {
