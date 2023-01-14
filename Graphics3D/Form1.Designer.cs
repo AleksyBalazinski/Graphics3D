@@ -39,6 +39,7 @@
             this.buttonAnimationStart = new System.Windows.Forms.Button();
             this.buttonLoad = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.checkBoxCoordSystem = new System.Windows.Forms.CheckBox();
             this.checkBoxSwinging = new System.Windows.Forms.CheckBox();
             this.groupBoxInterpolationMethod = new System.Windows.Forms.GroupBox();
             this.radioButtonConst = new System.Windows.Forms.RadioButton();
@@ -60,7 +61,6 @@
             this.trackBarScale = new System.Windows.Forms.TrackBar();
             this.panel3 = new System.Windows.Forms.Panel();
             this.buttonClear = new System.Windows.Forms.Button();
-            this.checkBoxCoordSystem = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).BeginInit();
             this.panel1.SuspendLayout();
@@ -134,7 +134,7 @@
             this.textBoxFps.Location = new System.Drawing.Point(522, 42);
             this.textBoxFps.Name = "textBoxFps";
             this.textBoxFps.ReadOnly = true;
-            this.textBoxFps.Size = new System.Drawing.Size(100, 23);
+            this.textBoxFps.Size = new System.Drawing.Size(63, 23);
             this.textBoxFps.TabIndex = 7;
             // 
             // buttonPauseInteractive
@@ -208,6 +208,18 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(114, 531);
             this.panel2.TabIndex = 4;
+            // 
+            // checkBoxCoordSystem
+            // 
+            this.checkBoxCoordSystem.AutoSize = true;
+            this.checkBoxCoordSystem.Checked = true;
+            this.checkBoxCoordSystem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxCoordSystem.Location = new System.Drawing.Point(11, 488);
+            this.checkBoxCoordSystem.Name = "checkBoxCoordSystem";
+            this.checkBoxCoordSystem.Size = new System.Drawing.Size(100, 19);
+            this.checkBoxCoordSystem.TabIndex = 39;
+            this.checkBoxCoordSystem.Text = "coord. system";
+            this.checkBoxCoordSystem.UseVisualStyleBackColor = true;
             // 
             // checkBoxSwinging
             // 
@@ -472,18 +484,6 @@
             this.buttonClear.Text = "Clear";
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
-            // 
-            // checkBoxCoordSystem
-            // 
-            this.checkBoxCoordSystem.AutoSize = true;
-            this.checkBoxCoordSystem.Checked = true;
-            this.checkBoxCoordSystem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxCoordSystem.Location = new System.Drawing.Point(11, 488);
-            this.checkBoxCoordSystem.Name = "checkBoxCoordSystem";
-            this.checkBoxCoordSystem.Size = new System.Drawing.Size(100, 19);
-            this.checkBoxCoordSystem.TabIndex = 39;
-            this.checkBoxCoordSystem.Text = "coord. system";
-            this.checkBoxCoordSystem.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 

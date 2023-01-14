@@ -42,7 +42,16 @@ namespace Graphics3D.Utility
             float wb = ((cy - ay) * (x - cx) + (ax - cx) * (y - cy)) / detT;
             float wc = 1 - wa - wb;
 
-            return (wa < 0 ? 0 : wa, wb < 0 ? 0 : wb, wc < 0 ? 0 : wc);
+            if (wa > 1) wa = 1;
+            if (wa < 0) wa = 0;
+
+            if (wb < 0) wb = 0;
+            if (wb > 1) wb = 1;
+
+            if (wc < 0) wc = 0;
+            if (wc > 1) wc = 1;
+
+            return (wa, wb, wc);
         }
 
         public static Matrix4x4 RotateOnto(Vector3 a, Vector3 b)

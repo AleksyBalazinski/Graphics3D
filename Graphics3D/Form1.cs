@@ -70,6 +70,8 @@ namespace Graphics3D
         {
             animationRunning = true;
             timer.Start();
+            buttonPauseInteractive.Enabled = false;
+            buttonStartInteractive.Enabled = false;
             fpsCountStart = DateTime.UtcNow;
         }
 
@@ -77,6 +79,8 @@ namespace Graphics3D
         {
             animationRunning = false;
             timer.Stop();
+            buttonPauseInteractive.Enabled = true;
+            buttonStartInteractive.Enabled = true;
         }
 
         private void TimerEventProcessor(object? sender, EventArgs e)
@@ -106,7 +110,7 @@ namespace Graphics3D
         private void DrawScene()
         {
             painter.Rasterizer.ClearDepthBuffer();
-            if(checkBoxCoordSystem.Checked)
+            if (checkBoxCoordSystem.Checked)
                 painter.DrawCoordinateSystem();
 
             foreach (var shape in shapes)
@@ -309,11 +313,15 @@ namespace Graphics3D
         {
             timer.Start();
             animationRunning = false;
+            buttonAnimationStart.Enabled = false;
+            buttonPauseAnimation.Enabled = false;
         }
 
         private void buttonPauseInteractive_Click(object sender, EventArgs e)
         {
             timer.Stop();
+            buttonAnimationStart.Enabled = true;
+            buttonPauseAnimation.Enabled = true;
         }
     }
 }

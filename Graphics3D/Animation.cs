@@ -202,10 +202,9 @@ namespace Graphics3D
                 car.ApplyGeneralRotation(Matrix4x4.CreateRotationZ(angle));
                 car.Translate(newPosition.X, newPosition.Y, newPosition.Z);
                 prevX = x; prevY = y;
-
-                UpdateLighting();
             }
 
+            UpdateLighting();
 
             UpdateCamera();
         }
