@@ -7,7 +7,7 @@ namespace Graphics3D
 {
     /// <summary>
     /// Animation containing:
-    /// * one moving car and two stationary objects (sphere and cube);
+    /// * one moving car and three stationary objects (sphere, cube, and torus);
     /// * two stationary light sources
     ///     1. yellow coming from positive x direction,
     ///     2. white coming from posisitve z direction,
@@ -22,6 +22,7 @@ namespace Graphics3D
         private readonly Shape car;
         private readonly Shape cube;
         private readonly Shape sphere;
+        private readonly Shape torus;
         private readonly List<Shape> shapes;
         public List<Shape> Shapes { get => shapes; }
 
@@ -68,7 +69,11 @@ namespace Graphics3D
             faces = ObjFileReader.Read(cubeObj);
             cube = new Shape(faces, new RGB(Color.IndianRed), Vector3.UnitX);
 
-            shapes = new List<Shape> { car, sphere, cube };
+            string torusObj = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\assets\torus.obj"));
+            faces = ObjFileReader.Read(torusObj);
+            torus = new Shape(faces, new RGB(Color.DarkTurquoise), Vector3.UnitX);
+
+            shapes = new List<Shape> { car, sphere, cube, torus };
         }
 
         public void InitScene()
@@ -78,6 +83,9 @@ namespace Graphics3D
 
             cube.Scale(2);
             cube.Translate(-10, -7, 0);
+
+            torus.Scale(3);
+            torus.Translate(10, -10, 0);
 
             painter.Rasterizer.ColorPicker.LightSources.Add(
                 new LightSource(LightSource.LightSourceType.Spotlight, new Vector3(0, 0, 1), new RGB(Color.White), 2, 0.7f, new Vector3(0, 0, 2)));
