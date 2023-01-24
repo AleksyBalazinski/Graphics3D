@@ -142,7 +142,6 @@ namespace Graphics3D
 
         public void UpdateScene(ulong ticks, bool swinging)
         {
-            Thread.Sleep(1);
             float a = 5;
             var (s, c) = MathF.SinCos(ticks / 20f);
             x = (a * c) / (1 + MathF.Pow(s, 2));
@@ -228,6 +227,8 @@ namespace Graphics3D
             {
                 var horizontalRotation = Matrix4x4.CreateRotationZ(horizontalLightAngle);
                 var verticalRotationAxis = Vector3.Normalize(Vector3.Cross(car.direction, Vector3.UnitZ));
+
+                // details at https://gamedev.stackexchange.com/a/50545
                 var verticalRotation = Quaternion.CreateFromAxisAngle(verticalRotationAxis, verticalLightAngle);
 
                 Vector3 u = new(verticalRotation.X, verticalRotation.Y, verticalRotation.Z);

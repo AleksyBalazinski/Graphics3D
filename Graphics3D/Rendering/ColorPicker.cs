@@ -10,6 +10,12 @@ namespace Graphics3D.Rendering
         public RGB Ambient { get; set; }
         public List<LightSource> LightSources { get; set; }
         public RGB FogColor { get; set; }
+
+        /// <remarks>
+        /// <note type="Cautionary">
+        /// This property should be modified through Painter object only to ensure consistency of the pipeline
+        /// </note>
+        /// </remarks>
         public Vector3 CameraPosition { get; set; }
 
         public ColorPicker()

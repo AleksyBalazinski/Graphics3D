@@ -18,12 +18,9 @@ namespace Graphics3D.Rendering
             get => fieldOfView;
         }
 
-        /// <summary>
-        /// Gets and sets camera position
-        /// </summary>
         /// <remarks>
         /// <note type="Cautionary">
-        /// This property should be modified through Painter to ensure consistency of the pipeline
+        /// This property should be modified through Painter object only to ensure consistency of the pipeline
         /// </note>
         /// </remarks>
         public Vector3 CameraPosition
@@ -36,12 +33,9 @@ namespace Graphics3D.Rendering
             get => cameraPosition;
         }
 
-        /// <summary>
-        /// Gets and sets camera target
-        /// </summary>
         /// <remarks>
         /// <note type="Cautionary">
-        /// This property should be modified through Painter to ensure consistency of the pipeline
+        /// This property should be modified through Painter object only to ensure consistency of the pipeline
         /// </note>
         /// </remarks>
         public Vector3 CameraTarget
