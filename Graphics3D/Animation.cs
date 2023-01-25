@@ -88,7 +88,7 @@ namespace Graphics3D
             torus.Translate(10, -10, 0);
 
             painter.Rasterizer.ColorPicker.LightSources.Add(
-                new LightSource(LightSource.LightSourceType.Spotlight, new Vector3(0, 0, 1), new RGB(Color.White), 2, 0.7f, new Vector3(0, 0, 2)));
+                new LightSource(LightSource.LightSourceType.Spotlight, new Vector3(0, 0, 1), new RGB(Color.White), e: 2, cutoff: 0.7f, location: new Vector3(0, 0, 2)));
 
             painter.Rasterizer.ColorPicker.LightSources.Add(
                 new LightSource(LightSource.LightSourceType.Point, new Vector3(0, 0, 1), new RGB(Color.White)));

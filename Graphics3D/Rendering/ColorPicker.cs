@@ -91,27 +91,27 @@ namespace Graphics3D.Rendering
                 return cos2 < 0 ? 0 : cos2;
             }).ToList();
 
-            var cs = LightSources.Select(ls => ls.LightColor * shape.Color).ToList();
-            RGB I = new();
+            RGB I = shape.Ka * Ambient;
 
             for (int i = 0; i < LightSources.Count; i++)
             {
+                float spotFactor = 1;
                 if (LightSources[i].Type == LightSource.LightSourceType.Spotlight)
                 {
                     var spotlight = LightSources[i];
                     Vector3 P = new(worldSpaceLocation.X, worldSpaceLocation.Y, worldSpaceLocation.Z);
                     float cosTheta = Vector3.Dot(Vector3.Normalize(spotlight.Location - P), spotlight.LightDirection);
                     if (cosTheta > spotlight.Cutoff)
-                        cs[i] = MathF.Pow(cosTheta, spotlight.E) * cs[i];
+                        spotFactor = MathF.Pow(cosTheta, spotlight.E);
                     else
-                        cs[i] = new RGB(0, 0, 0);
+                        spotFactor = 0;
                 }
 
-                I += shape.Ka * Ambient
-                    + (shape.Kd * cos1s[i] + shape.Ks * MathF.Pow(cos2s[i], shape.M)) * cs[i];
+                I += spotFactor *
+                     (shape.Kd * cos1s[i] + shape.Ks * MathF.Pow(cos2s[i], shape.M)) * LightSources[i].LightColor;
             }
 
-            return Fog(depth) * I + (1 - Fog(depth)) * FogColor;
+            return Fog(depth) * I * shape.Color + (1 - Fog(depth)) * FogColor;
         }
 
         private static float Fog(float depth)
