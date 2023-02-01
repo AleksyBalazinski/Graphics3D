@@ -1,5 +1,6 @@
 # Graphics3D
 3D graphics application made using a custom rendering pipeline.
+![demo screenshot](demo/screenshot.png)
 ## Application
 The scene comprises
 * moving car model and three stationary objects (sphere, cube, and torus);
